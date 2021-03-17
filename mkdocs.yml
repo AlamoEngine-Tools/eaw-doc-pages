@@ -1,3 +1,10 @@
 site_name: EaW Mod Hub Documentation
 site_url: https://eaw-mod-hub-documentation.readthedocs.io
 repo_url: https://github.com/AlamoEngine-Tools/eaw-doc-pages
+repo_name: 'GitHub'
+edit_uri: edit/main/docs/
+site_description: The community maintained EaW Mod Hub Documentation for Star Wars - Empire at War and Star Wars - Empire at War - Forces of Corruption
+site_author: Alamo Engine Tools and contributors
+copyright: Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved. Licensed under the MIT license. See LICENSE file in the project root for details.
+
+theme: readthedocs
