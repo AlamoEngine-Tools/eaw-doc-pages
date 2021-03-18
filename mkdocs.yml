@@ -21,12 +21,19 @@ repo_name: 'GitHub'
 edit_uri: edit/main/docs/
 site_description: The community maintained EaW Mod Hub Documentation for Star Wars - Empire at War and Star Wars - Empire at War - Forces of Corruption
 site_author: Alamo Engine Tools and contributors
-copyright: Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved. Licensed under the MIT license. See LICENSE file in the project root for details.
+copyright: Copyright &copy; 2021 Alamo Engine Tools and contributors. All rights reserved. Licensed under the MIT license. See LICENSE file in the project root for details.
 theme:
   name: material
   custom_dir: docs/overrides
   palette:
     primary: indigo
+  logo: assets/modhub_icon.png
+  favicon: assets/modhub_icon.png
+  features:
+#    - navigation.tabs
+    - navigation.expand
+    - navigation.instant
+    - toc.integrate
 markdown_extensions:
   - toc:
       permalink: true
@@ -34,7 +41,8 @@ markdown_extensions:
       linenums: true
   - smarty
 plugins:
-    - search 
+    - search:
+        lang: en
     - git-authors
     - git-revision-date-localized:
         fallback_to_build_date: true
