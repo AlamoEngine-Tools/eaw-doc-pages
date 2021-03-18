@@ -1,4 +1,4 @@
-site_name: EaW Mod Hub Documentation
+site_name: EaW ModHub Documentation
 site_url: https://eaw-mod-hub-documentation.readthedocs.io
 repo_url: https://github.com/AlamoEngine-Tools/eaw-doc-pages
 repo_name: 'GitHub'
@@ -8,3 +8,33 @@ site_author: Alamo Engine Tools and contributors
 copyright: Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved. Licensed under the MIT license. See LICENSE file in the project root for details.
 
 theme: readthedocs
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - codehilite:
+      linenums: true
+  - smarty
+
+nav:
+  - Home: index.md
+  - Modding Tools:
+    - Empire at War Tools:
+      - tools/eaw/map_editor.md
+      - tools/eaw/particle_editor.md
+      - tools/eaw/alo_viewer.md
+    - Code Editors:
+      - tools/code/vscode.md
+    - Modelling Tools:
+      - tools/modelling/blender.md
+      - tools/modelling/autodesk.md
+    - Texturing Tools:
+      - tools/texturing/substance_suite.md
+  - Tags: tags.md
+
+plugins:
+    - search:
+        min_search_length: 4
+        lang: en
+    - tags:
+        tags_folder: /tmp/mysite/tgs
