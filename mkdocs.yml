@@ -7,7 +7,9 @@ site_description: The community maintained EaW Mod Hub Documentation for Star Wa
 site_author: Alamo Engine Tools and contributors
 copyright: Copyright (c) 2021 Alamo Engine Tools and contributors. All rights reserved. Licensed under the MIT license. See LICENSE file in the project root for details.
 
-theme: readthedocs
+theme:
+  name: readthedocs
+  custom_dir: docs/overrides
 
 markdown_extensions:
   - toc:
@@ -33,8 +35,13 @@ nav:
   - Tags: tags.md
 
 plugins:
-    - search:
-        min_search_length: 4
-        lang: en
+    - search 
+    - git-authors
+    - git-revision-date-localized:
+        fallback_to_build_date: true
+        type: timeago
+        timezone: Europe/Amsterdam
+        exclude:
+          - tags.md
     - tags:
         tags_folder: /tmp/mysite/tgs

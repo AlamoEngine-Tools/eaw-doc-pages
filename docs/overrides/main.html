@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+{{ super() }}
+
+{% if git_page_authors %}
+<div class="md-source-date">
+    <small>
+        Authors: {{ git_page_authors | default('enable mkdocs-git-authors-plugin') }} {% if
+        page.meta.git_revision_date_localized %}<br>Last Updated: {{ page.meta.git_revision_date_localized }}{% endif %}
+    </small>
+</div>
+{% endif %}
+{% endblock %}

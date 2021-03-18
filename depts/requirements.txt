@@ -1,1 +1,3 @@
 git+https://github.com/jldiaz/mkdocs-plugin-tags.git
+mkdocs-git-authors-plugin
+mkdocs-git-revision-date-localized-plugin
