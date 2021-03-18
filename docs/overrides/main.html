@@ -6,8 +6,7 @@
 {% if git_page_authors %}
 <div class="md-source-date">
     <small>
-        Authors: {{ git_page_authors | default('enable mkdocs-git-authors-plugin') }} {% if
-        page.meta.git_revision_date_localized %}<br>Last Updated: {{ page.meta.git_revision_date_localized }}{% endif %}
+        Authors: {{ git_page_authors | default('enable mkdocs-git-authors-plugin') }}
     </small>
 </div>
 {% endif %}
