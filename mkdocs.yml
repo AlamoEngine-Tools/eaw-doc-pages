@@ -1,5 +1,13 @@
 nav:
   - Home: index.md
+  - Technical Documentation: 
+    - Lua:
+      - technical_documentation/lua/eaw-lua-tips.md
+      - technical_documentation/lua/foc-lua-scripts.md
+      - technical_documentation/lua/luafunctions.md
+    - Xml:
+      - technical_documentation/xml/xml-tag-overview.md
+      - technical_documentation/xml/xml-events-rewards.md
   - Modding Tools:
     - Empire at War Tools:
       - tools/eaw/map_editor.md
