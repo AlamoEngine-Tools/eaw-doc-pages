@@ -29,6 +29,7 @@ theme:
     primary: indigo
   logo: assets/modhub_icon.png
   favicon: assets/modhub_icon.png
+  font: false # Disable google fonts for GDPR compliance.
   features:
 #    - navigation.tabs
     - navigation.expand
