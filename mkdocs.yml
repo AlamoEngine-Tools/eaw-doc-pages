@@ -14,12 +14,12 @@ nav:
       - tools/texturing/substance_suite.md
   - Technical Documentation:
     - Lua:
-      - tecdoc/lua/eaw-lua-tips.md
-      - tecdoc/lua/foc-lua-scripts.md
-      - tecdoc/lua/luafunctions.md
+      - techdoc/lua/eaw-lua-tips.md
+      - techdoc/lua/foc-lua-scripts.md
+      - techdoc/lua/luafunctions.md
     - Xml:
-      - tecdoc/xml/xml-tag-overview.md
-      - tecdoc/xml/xml-events-rewards.md
+      - techdoc/xml/xml-tag-overview.md
+      - techdoc/xml/xml-events-rewards.md
 ######################### DO NOT EDIT BELOW THIS LINE #########################
   - Tags: tags.md
 site_name: Empire at War ModHub Documentation
@@ -41,8 +41,9 @@ theme:
   features:
 #    - navigation.tabs
     - navigation.expand
-    - navigation.instant
-    - toc.integrate
+    - navigation.instant    
+    - navigation.tracking
+    - navigation.indexes
 markdown_extensions:
   - toc:
       permalink: true
