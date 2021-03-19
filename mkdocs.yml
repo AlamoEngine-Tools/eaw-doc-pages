@@ -14,7 +14,7 @@ nav:
       - tools/texturing/substance_suite.md
 ######################### DO NOT EDIT BELOW THIS LINE #########################
   - Tags: tags.md
-site_name: EaW ModHub Documentation
+site_name: Empire at War ModHub Documentation
 site_url: https://eaw-mod-hub-documentation.readthedocs.io
 repo_url: https://github.com/AlamoEngine-Tools/eaw-doc-pages
 repo_name: 'GitHub'
