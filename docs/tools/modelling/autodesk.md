@@ -1,5 +1,5 @@
 ---
-title: 3DS Max 8/9
+title: 3DS Max 6, 8 and 9
 tags:
   - Tool
   - Official
@@ -9,7 +9,7 @@ tags:
   - Superseded
 ---
 
-# 3DS Max 8/9
+# 3DS Max 6, 8 and 9
 
 !!! warning "Tool severly outdated, use Blender instead!"
 
@@ -23,6 +23,17 @@ The is an ALO-importer and ALO-exporter available that supports EaW's and FoC's 
 !!! danger "Acquiring 3DS Max"
     3DS Max 8 and 9 are no longer sold by Autodesk, the only way to acquire them is through third-party vendors and second-hand.  
     Make sure that the third-party vendor you buy either a Disk Version (3DS Max 8/9 were often included with course books) or a key from can be trusted.
+
+## Prerequisites
+
+To ensure that the exporter works properly, please make ensure the following prerequisites are met before installing and using the exporter:
+
+- If you're using 3ds Max 6, install Service Pack 1  
+  If you've already installed SP1, it should say so in the window title when 3ds Max is started.
+- If you're using 3ds Max 8, install Service Pack 3  
+  If you've already installed SP3, it should say so in the window title when 3ds Max is started.
+- If you're using 3ds Max 9, install Service Pack 2  
+  If you've already installed SP2, it should say so in the window title when 3ds Max is started.
 
 ## Known Issues
 
