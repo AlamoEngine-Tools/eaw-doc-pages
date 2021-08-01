@@ -17,6 +17,17 @@ nav:
       - techdoc/lua/eaw-lua-tips.md
       - techdoc/lua/foc-lua-scripts.md
       - techdoc/lua/luafunctions.md
+      - Scripts:
+        - Libraries:
+          - techdoc/lua/libraries/pgdebug.md
+          - techdoc/lua/libraries/pgbase.md
+          - techdoc/lua/libraries/pgbasedefinitions.md
+          - techdoc/lua/libraries/pgcommands.md
+          - techdoc/lua/libraries/pgaicommands.md
+          - techdoc/lua/libraries/pgstatemachine.md
+          - techdoc/lua/libraries/pgmoveunits.md
+          - techdoc/lua/libraries/pgspawnunits.md
+          - techdoc/lua/libraries/pgstorymode.md
     - Xml:
       - techdoc/xml/xml-tag-overview.md
       - techdoc/xml/xml-events-rewards.md
