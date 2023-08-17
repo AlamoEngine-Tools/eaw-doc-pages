@@ -8,8 +8,10 @@ This is a community maintained modding documentation for Star Wars - Empire at W
 
 ## Contributing
 
-// TODO
+You can contribute to this documentation page by editing or adding pages and opening a pull request.
 
-## About
+## Tags
 
-// TODO
+Relevant tags used throughout the documentation.
+
+[TAGS]
