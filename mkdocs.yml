@@ -32,7 +32,6 @@ nav:
       - techdoc/xml/xml-tag-overview.md
       - techdoc/xml/xml-events-rewards.md
 ######################### DO NOT EDIT BELOW THIS LINE #########################
-  - Tags: tags.md
 site_name: Star Wars - Empire at War - Unofficial Modding Documentation
 site_url: https://aet-sweaw-modding.readthedocs.io
 repo_url: https://github.com/AlamoEngine-Tools/eaw-doc-pages
@@ -94,5 +93,3 @@ extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/AlamoEngine-Tools/eaw-doc-pages
-    - icon: fontawesome/brands/discord
-      link: https://discord.gg/QCaDEdKkVP
