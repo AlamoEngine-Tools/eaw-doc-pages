@@ -50,10 +50,18 @@ theme:
   font: false # [gruenwaldlk]: Disable google fonts for GDPR compliance. TODO: Add new (EaW specific) fonts.
   features:
     - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.expand
     - navigation.instant    
     - navigation.tracking
-#    - navigation.indexes # [gruenwaldlk]: Disabled, insiders only.
+    - navigation.path
+    - navigation.sections
+    - navigation.top
+    - toc.follow
+    - toc.integrate
+    - search.suggest
+    - search.highlight
+    - search.share
 markdown_extensions:
   - toc:
       permalink: true

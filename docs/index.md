@@ -1,5 +1,6 @@
 ---
 title: Welcome
+comments: true
 ---
 
 # Welcome to the Star Wars: Empire at War ModHub Documentation
@@ -10,8 +11,9 @@ This is a community maintained modding documentation for Star Wars - Empire at W
 
 You can contribute to this documentation page by editing or adding pages and opening a pull request.
 
-## Tags
+## Topics
 
-Relevant tags used throughout the documentation.
+Pages can be tagged an therefore loosely grouped besides the rigid navigation.
+This is a list of all tags and pages grouped by usage.
 
 [TAGS]
