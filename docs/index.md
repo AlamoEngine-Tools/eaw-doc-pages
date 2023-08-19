@@ -13,7 +13,7 @@ You can contribute to this documentation page by editing or adding pages and ope
 
 ## Topics
 
-Pages can be tagged an therefore loosely grouped besides the rigid navigation.
+Pages can be tagged an therefore loosely grouped besides the rigid navigation.  
 This is a list of all tags and pages grouped by usage.
 
 [TAGS]
