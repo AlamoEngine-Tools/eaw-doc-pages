@@ -1,7 +1,8 @@
 ---
 title: PGBase.lua
 tags:
-  - Lua Library
+  - LUA Library
+  - FoC
 ---
 
 # `PGBase.lua`

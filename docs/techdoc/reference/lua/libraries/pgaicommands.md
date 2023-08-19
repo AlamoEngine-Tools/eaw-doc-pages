@@ -1,7 +1,8 @@
 ---
 title: PGAICommands.lua
 tags:
-  - Lua Library
+  - LUA Library
+  - FoC
 ---
 
 # `PGAICommands.lua`
