@@ -3,13 +3,13 @@ title: Welcome
 comments: true
 ---
 
-# Welcome to the Star Wars: Empire at War ModHub Documentation
+# Welcome to the Star Wars: Empire at War Documentation
 
 This is a community maintained modding documentation for Star Wars - Empire at War and Star Wars - Empire at War - Forces of Corruption: Documentation, tutorials, free release resources ... we've got it all.
 
 ## Contributing
 
-You can contribute to this documentation page by editing or adding pages and opening a pull request.
+You can contribute to this documentation page by editing or adding pages and opening a pull request in the [associated repository.}(https://github.com/AlamoEngine-Tools/eaw-doc-pages)
 
 ## Topics
 
