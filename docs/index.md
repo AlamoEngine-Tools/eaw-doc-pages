@@ -9,7 +9,7 @@ This is a community maintained modding documentation for Star Wars - Empire at W
 
 ## Contributing
 
-You can contribute to this documentation page by editing or adding pages and opening a pull request in the [associated repository.}(https://github.com/AlamoEngine-Tools/eaw-doc-pages)
+You can contribute to this documentation page by editing or adding pages and opening a pull request in the [associated repository.](https://github.com/AlamoEngine-Tools/eaw-doc-pages)
 
 ## Topics
 
