@@ -13,48 +13,62 @@ nav:
     - Texturing Tools:
       - tools/texturing/substance_suite.md
   - Technical Documentation:
-    - Lua:
-      - techdoc/lua/eaw-lua-tips.md
-      - techdoc/lua/foc-lua-scripts.md
-      - techdoc/lua/luafunctions.md
-      - Scripts:
+    #- Game Systems:
+    #  - Data:
+    #  - Story Scripting:
+    #  - AI:
+    - Known Issues and Quirks:
+      - LUA:
+        - techdoc/issues/lua/issues.md
+    - References:
+      - LUA:
+        - techdoc/reference/lua/eaw-lua-tips.md
+        - techdoc/reference/lua/foc-lua-scripts.md
+        - techdoc/reference/lua/luafunctions.md
         - Libraries:
-          - techdoc/lua/libraries/pgdebug.md
-          - techdoc/lua/libraries/pgbase.md
-          - techdoc/lua/libraries/pgbasedefinitions.md
-          - techdoc/lua/libraries/pgcommands.md
-          - techdoc/lua/libraries/pgaicommands.md
-          - techdoc/lua/libraries/pgstatemachine.md
-          - techdoc/lua/libraries/pgmoveunits.md
-          - techdoc/lua/libraries/pgspawnunits.md
-          - techdoc/lua/libraries/pgstorymode.md
-    - Xml:
-      - techdoc/xml/xml-tag-overview.md
-      - techdoc/xml/xml-events-rewards.md
+          - techdoc/reference/lua/libraries/pgdebug.md
+          - techdoc/reference/lua/libraries/pgbase.md
+          - techdoc/reference/lua/libraries/pgbasedefinitions.md
+          - techdoc/reference/lua/libraries/pgcommands.md
+          - techdoc/reference/lua/libraries/pgaicommands.md
+          - techdoc/reference/lua/libraries/pgstatemachine.md
+          - techdoc/reference/lua/libraries/pgmoveunits.md
+          - techdoc/reference/lua/libraries/pgspawnunits.md
+          - techdoc/reference/lua/libraries/pgstorymode.md
+      - Xml:
+        - techdoc/reference/xml/xml-tag-overview.md
+        - techdoc/reference/xml/xml-events-rewards.md
 ######################### DO NOT EDIT BELOW THIS LINE #########################
-  - Tags: tags.md
-site_name: Empire at War ModHub Documentation
-site_url: https://eaw-mod-hub-documentation.readthedocs.io
+site_name: Star Wars - Empire at War - Unofficial Modding Documentation
+site_url: https://aet-sweaw-modding.readthedocs.io
 repo_url: https://github.com/AlamoEngine-Tools/eaw-doc-pages
 repo_name: 'GitHub'
 edit_uri: edit/main/docs/
-site_description: The community maintained EaW Mod Hub Documentation for Star Wars - Empire at War and Star Wars - Empire at War - Forces of Corruption
+site_description: The community maintained documentation for Star Wars - Empire at War and Star Wars - Empire at War - Forces of Corruption
 site_author: Alamo Engine Tools and contributors
-copyright: Copyright &copy; 2021 Alamo Engine Tools and contributors. All rights reserved. Licensed under the MIT license. See LICENSE file in the project root for details.
+copyright: Copyright &copy; Alamo Engine Tools and contributors. All rights reserved. Licensed under the MIT license. See LICENSE file in the project root for details.
 theme:
   name: material
   custom_dir: docs/overrides
   palette:
     primary: indigo
-  logo: assets/modhub_icon.png
-  favicon: assets/modhub_icon.png
+  logo: assets/aet_icon.png
+  favicon: assets/aet_icon.png
   font: false # [gruenwaldlk]: Disable google fonts for GDPR compliance. TODO: Add new (EaW specific) fonts.
   features:
-#    - navigation.tabs
+    - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.expand
     - navigation.instant    
     - navigation.tracking
-#    - navigation.indexes # [gruenwaldlk]: Disabled, insiders only.
+    - navigation.path
+    - navigation.sections
+    - navigation.top
+    - toc.follow
+    - toc.integrate
+    - search.suggest
+    - search.highlight
+    - search.share
 markdown_extensions:
   - toc:
       permalink: true
@@ -86,13 +100,10 @@ plugins:
         fallback_to_build_date: true
         type: timeago
         timezone: Europe/Amsterdam
-        exclude:
-          - tags.md
     - tags:
         tags_folder: /tmp/mysite/tgs
+        tags_file: index.md
 extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/AlamoEngine-Tools/eaw-doc-pages
-    - icon: fontawesome/brands/discord
-      link: https://discord.gg/QCaDEdKkVP

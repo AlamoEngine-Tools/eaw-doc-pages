@@ -3,7 +3,7 @@ title: Blender
 tags:
   - Tool
   - Unofficial
-  - Actively Maintained
+  - Maintained
   - Freeware
 ---
 

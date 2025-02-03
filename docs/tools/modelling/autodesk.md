@@ -6,7 +6,6 @@ tags:
   - EaW Compatible
   - FoC Compatible
   - Outdated
-  - Superseded
 ---
 
 # 3DS Max 6, 8 and 9
@@ -18,10 +17,10 @@ tags:
 Autodesk 3DS Max is a 3D modelling program originally used to create 3D assets for Empire at War and Forces of Corruption.
 Since Empire at War and Forces of Corruption released in 2005, the only compatible 3DS Max versions are version 8 and 9.
 
-The is an ALO-importer and ALO-exporter available that supports EaW's and FoC's animation formats.
+There is an ALO-importer and ALO-exporter available that supports EaW's and FoC's animation formats.
 
 !!! danger "Acquiring 3DS Max"
-    3DS Max 8 and 9 are no longer sold by Autodesk, the only way to acquire them is through third-party vendors and second-hand.  
+    3DS Max 6, 8 and 9 are no longer sold by Autodesk, the only way to acquire them is through third-party vendors and second-hand.  
     Make sure that the third-party vendor you buy either a Disk Version (3DS Max 8/9 were often included with course books) or a key from can be trusted.
 
 ## Prerequisites

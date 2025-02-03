@@ -1,7 +1,8 @@
 ---
 title: PGDebug.lua
 tags:
-  - Lua Library
+  - LUA Library
+  - FoC
 ---
 # `PGDebug.lua`
 
