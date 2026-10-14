@@ -7,7 +7,7 @@ tags:
   - Scripting
   - FoC
 ---
-# Lua Script Lifecycle
+# Lua script lifecycle
 
 This page describes the lifetime of a Lua script state in the game: what happens to a
 script's global variables when the object it belongs to is destroyed, when a tactical battle
@@ -53,7 +53,11 @@ stateDiagram-v2
 | Saved to Restored | a bare state is created and the saved state merged in: the file is not executed, `Base_Definitions` is not called, `main` is not restarted; the script resumes inside the yield it was saved in |
 | Restored to Closed | a restored state is never pooled; the owner's destruction closes it |
 
-Pooling is the default. Only a script whose file (or a library it requires) sets
+Pooling is the default. The first time a script file is needed, the game loads it; if the file
+sets `ScriptPoolCount`, the game loads that many states at once, even if not all of them are
+needed. The count is not a limit: when every state is in use, the game loads another one. The
+game reads `ScriptPoolCount` after the file and everything it requires have run. Only a script
+whose file (or a library it requires) sets
 `ScriptPoolCount = 0` is closed when its owner is destroyed; the shipped story-mode library
 does so, which makes story plot scripts unpooled by default. A state restored from a save game
 does not enter the pool either: when its owner is destroyed it is closed, and the next owner
@@ -68,22 +72,28 @@ receives a fresh state.
 
 ### 1.2 Removed on release to the pool
 
-- Every global whose value is a table. The library's `Flush_G` retains only the core tables
-  (`string`, `table`, `coroutine` and a few others).
+- Every global whose value is a table. The library's `Flush_G` retains only `_LOADED`,
+  `coroutine`, `string`, `table`, `security`, `LuaWrapperMetaTable` and `_G`.
 - Every global that holds an engine object: units, types, players, planets, plots, task
-  forces, targets. The reference is deleted from the state; the object may no longer exist.
+  forces, targets. `Flush_G` deletes every global userdata whose `Is_Pool_Safe()` returns
+  false; engine commands and `Script` are kept. The reference is deleted from the state; the
+  object may no longer exist.
 - All running threads, including `main`. The next owner starts `main` again.
+
+A script that defines no `Flush_G` is not an error: the game skips the call silently and the
+state keeps all its globals.
 
 ### 1.3 Consequence
 
-The shipped library's `Common_Base_Definitions` sets the globals it knows about to `nil` and
-calls `ThreadValue.Reset()` and `GetEvent.Reset()`. Script-specific globals are not on that
-list. A number, string or boolean assigned during one owner's lifetime is still assigned when
-the next object with the same script file takes the state, which may be a different unit type
-or a later battle. The library's `Base_Definitions` calls the script's `Definitions()` at that
-moment, so a `Definitions` that assigns its initial values unconditionally restores a defined
-starting state for every owner. A value assigned at the file's top level, outside any function,
-is assigned once, when the state is created, and never again.
+!!! warning
+    The shipped library's `Common_Base_Definitions` sets the globals it knows about to `nil` and
+    calls `ThreadValue.Reset()` and `GetEvent.Reset()`. Script-specific globals are not on that
+    list. A number, string or boolean assigned during one owner's lifetime is still assigned when
+    the next object with the same script file takes the state, which may be a different unit type
+    or a later battle. The library's `Base_Definitions` calls the script's `Definitions()` at that
+    moment, so a `Definitions` that assigns its initial values unconditionally restores a defined
+    starting state for every owner. A value assigned at the file's top level, outside any function,
+    is assigned once, when the state is created, and never again.
 
 ## 2. Game-level transitions
 
@@ -144,11 +154,16 @@ restored state.
 - **Host-assigned globals:** `Object`, on a fresh or reused attach; on a load it is restored
   from the save.
 - **Service:** once per `ServiceRate` seconds of the object's game mode, gated on
-  `LastService`; not at all while the galactic game is paused or a battle runs under it.
-- **Hazard:** `LastService` is a plain number and carries over; the library clears it in
-  `Common_Base_Definitions`. A script that bypasses that call can inherit a stale value and
-  remain unserviced for a long time after reuse (inferred from the service rule; not observed
-  in a running game).
+  `LastService`; not at all while the galactic game is paused or a battle runs under it. The
+  game reads `LastService` and `ServiceRate` from the script and services it only when the
+  current game time minus `LastService` exceeds `ServiceRate`; a `nil` `LastService` is
+  replaced by the game on the first service.
+
+!!! warning
+    `LastService` is a plain number and carries over; the library clears it in
+    `Common_Base_Definitions`. A script that bypasses that call can inherit a stale value and
+    remain unserviced for a long time after reuse (inferred from the service rule; not observed
+    in a running game).
 
 ### 3.2 Story plot scripts (`Lua_Script` on a story plot)
 
@@ -198,7 +213,8 @@ restored state.
 
 - One store for the whole game session, shared by every script of every category.
 - `GlobalValue.Set(name, value)` stores a copy. Numbers, strings and booleans are accepted; a
-  table is deep-copied; an engine object (unit, player, planet, the script itself) is rejected.
+  table is deep-copied; an engine object (unit, player, planet, the script itself) is rejected
+  with an error.
 - `GlobalValue.Get(name)` returns a fresh copy, or `nil` when the key is absent. Two scripts
   never share a table through it.
 - A function value is accepted at run time but cannot be saved.
@@ -221,6 +237,11 @@ and a `main` provided by the library. The library's `Base_Definitions` calls
 `Definitions()`. The game calls `Base_Definitions` on the first load of a state and again every
 time a state is released to the pool. `Definitions` is therefore the one function that runs for
 every owner.
+
+When `Base_Definitions` runs, the host-assigned globals (`Object`, `PlayerObject`, `Target`,
+`AITarget`, `Budget`, `FreeStore`) are not yet set; the game assigns them afterwards, so
+`Definitions()` cannot use them. A script without `Base_Definitions` is not an error; the game
+skips the call silently.
 
 ### 5.1 Required practice
 
@@ -258,8 +279,12 @@ every owner.
   and `GetEvent` resets) and the script's `Definitions()`. If it is unavoidable, call both.
 - Do not set `ScriptPoolCount = 0` on a common unit script as a workaround for reset problems;
   it costs a file parse per attach. Correct `Definitions()` instead.
-- Do not rename or remove functions once a version with save games is released; a save carries
-  the old code, and an edited file does not reach it.
+- Treat a change to a shipped script as save-breaking until tested. Modders have repeatedly
+  seen existing save games corrupted by script changes, with upvalues (locals captured by a
+  function) as one confirmed cause; the exact mechanism is still being investigated.
+  Independently of that, an edit to a script file does not reach an existing save, which
+  carries its own copy of the code, so a loaded game can run the saved version of a script next
+  to the new version in states created later.
 - Do not wait for a load event or restart `main` logic manually; no such event exists, and a
   restored script continues where it was.
 - Do not expect a galactic unit's script to run during a battle or a galactic pause, and do not
@@ -270,52 +295,54 @@ every owner.
 
 ### 5.3 Reference skeleton
 
-```lua
-require("PGStateMachine")
+???+ example "Reference skeleton"
 
--- No assignments at file level: the file is executed once per state, not once per owner.
+    ```lua
+    require("PGStateMachine")
 
-function Definitions()
-    DebugMessage("%s -- In Definitions", tostring(Script))
-    ServiceRate = 1.0           -- the library assigned 0.2 immediately before this call
-    Define_State("State_Init", State_Init)
-    Define_State("State_Patrol", State_Patrol)
+    -- No assignments at file level: the file is executed once per state, not once per owner.
 
-    kills_this_life = 0         -- every global the script reads, assigned here on every call
-    patrol_index = 1
-    escorts = {}                -- per-owner table, rebuilt for each owner
-    my_player = nil             -- engine objects: declared here, acquired once in State_Init
-    station = nil
-end
+    function Definitions()
+        DebugMessage("%s -- In Definitions", tostring(Script))
+        ServiceRate = 1.0           -- the library assigned 0.2 immediately before this call
+        Define_State("State_Init", State_Init)
+        Define_State("State_Patrol", State_Patrol)
 
--- State_Init is the setup state: OnEnter only, then a transition. It runs for every
--- owner because main is restarted per owner. It does not run after a load, and need not:
--- the objects it acquired are restored from the save.
-function State_Init(message)
-    if message == OnEnter then
-        if Get_Game_Mode() ~= "Space" then   -- "Galactic", "Space" or "Land"
-            ScriptExit()                     -- not the intended mode: terminate the script
-        end
-
-        -- Acquired once per owner. Both are nil again when the next owner receives this
-        -- state: Flush_G removed the objects, Definitions assigned nil to the names.
-        my_player = Object.Get_Owner()
-        station = Find_First_Object("Empire_Star_Base_2")
-
-        Set_Next_State("State_Patrol")
+        kills_this_life = 0         -- every global the script reads, assigned here on every call
+        patrol_index = 1
+        escorts = {}                -- per-owner table, rebuilt for each owner
+        my_player = nil             -- engine objects: declared here, acquired once in State_Init
+        station = nil
     end
-end
 
-function State_Patrol(message)
-    if message == OnUpdate then
-        -- A reference acquired once is not valid indefinitely: the station can be destroyed.
-        if not TestValid(station) then
-            station = Find_First_Object("Empire_Star_Base_2")
-            if not TestValid(station) then
-                return                       -- no station exists; nothing to do this tick
+    -- State_Init is the setup state: OnEnter only, then a transition. It runs for every
+    -- owner because main is restarted per owner. It does not run after a load, and need not:
+    -- the objects it acquired are restored from the save.
+    function State_Init(message)
+        if message == OnEnter then
+            if Get_Game_Mode() ~= "Space" then   -- "Galactic", "Space" or "Land"
+                ScriptExit()                     -- not the intended mode: terminate the script
             end
+
+            -- Acquired once per owner. Both are nil again when the next owner receives this
+            -- state: Flush_G removed the objects, Definitions assigned nil to the names.
+            my_player = Object.Get_Owner()
+            station = Find_First_Object("Empire_Star_Base_2")
+
+            Set_Next_State("State_Patrol")
         end
-        -- operate on station and my_player
     end
-end
-```
+
+    function State_Patrol(message)
+        if message == OnUpdate then
+            -- A reference acquired once is not valid indefinitely: the station can be destroyed.
+            if not TestValid(station) then
+                station = Find_First_Object("Empire_Star_Base_2")
+                if not TestValid(station) then
+                    return                       -- no station exists; nothing to do this tick
+                end
+            end
+            -- operate on station and my_player
+        end
+    end
+    ```

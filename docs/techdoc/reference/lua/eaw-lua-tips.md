@@ -9,22 +9,18 @@ tags:
 # Engine issues and quirks
 ---
 
-**Upvalues:**
-Upvalues, i.e. local variables defined outside of a function they are used in, crash the game when loading a save game. E.g.:
-```
-local a = 10
-function wait()
-  Sleep(a)
-end
-```
+The [known issues](../../issues/lua/issues.md) page is the reference for engine bugs; the entries below summarise them.
+
+!!! warning "Upvalues"
+    Upvalues, i.e. local variables defined outside of a function they are used in, crash the game when loading a save game. Treat a change to a shipped script as save-breaking until tested. See [Upvalues](../../issues/lua/issues.md#upvalues) for an example and [Practices to avoid](lua-script-lifecycle.md#52-practices-to-avoid) for what else a script change does to an existing save.
 
 ---
 
-**Prevent_AI_Usage caveat:** If this is used on a unit whose faction has no AI assigned, the game crashes. This also means that SpawnList cannot be used in this situation.
+**Prevent_AI_Usage caveat:** Crashes the game on a unit whose faction has no AI assigned, which also rules out SpawnList in that situation; see [`Prevent_AI_Usage` caveat](../../issues/lua/issues.md#prevent_ai_usage-caveat).
 
 ---
 
-**Resume_Hyperspace_In problems:** Can effectively only be used for the duration of the intro cinematic since fighter icons will appear on the map and the fleet will be spawned if the player uses cinematic mode.
+**Resume_Hyperspace_In problems:** Effectively usable only during the intro cinematic; see [`Resume_Hyperspace_In` problems](../../issues/lua/issues.md#resume_hyperspace_in-problems).
 
 ---
 
@@ -32,41 +28,60 @@ end
 ---
 
 **AI activation in tactical battles:**
-For performance reasons (probably), in tactical battles the engine only activates the AI for players that have units on the map at the very start of the battle. To activate the AI for a faction that has no units at the beginning, use the Enable_As_Actor command.
+In tactical battles the engine only activates the AI for players that have units on the map at the very start of the battle. To activate the AI for a faction that has no units at the beginning, use the Enable_As_Actor command.
+
+!!! info "Unverified"
+    The engine does this for performance reasons.
 
 ---
 
 **Error handling:**
-There are two fundamentally different types of errors: Lua errors and C++ exceptions. Lua errors are directly caused by Lua code (e.g. when trying to call a nil value or by using the `error` function) and will only crash the thread that they occured in. They can be caught using `pcall`. Exceptions can occur in C++ functions that the Lua code calls and will crash the entire script. There is (to my knowledge) no way to catch them.
+There are two fundamentally different types of errors: Lua errors and C++ exceptions. Lua errors are directly caused by Lua code (e.g. when trying to call a nil value or by using the `error` function) and will only crash the thread that they occurred in. The engine drops that thread, writes the error text and the call stack to the AI log, and keeps running the other threads of the same script. They can be caught using `pcall`. Exceptions can occur in C++ functions that the Lua code calls and crash the entire script.
 
-The `error` and `pcall` functions seem to work normally with the small exception that when a string is passed to `error`, information on the line in which the error occured is added to it at the beginning. Other datatypes are not modified.
+!!! info "Unverified"
+    There is no way to catch C++ exceptions from Lua.
+
+!!! info "Unverified"
+    The `error` and `pcall` functions work normally, except that when a string is passed to `error`, information on the line in which the error occurred is added to its beginning. Other data types are not modified.
 
 ---
 
 **Set/Transition Cinematic Camera/Target Key:**
-These four commands make just about any camera shot possible. For all four the first parameter is a game object whose position functions as a reference point for the camera setting. For the transition functions the second parameter is the time they take to perform the transition to the new position. The remaining 7 parameters (in this order) do the following:
+These four commands make nearly any camera shot possible. For all four the first parameter is a game object whose position functions as a reference point for the camera setting. For the transition functions the second parameter is the time they take to perform the transition to the new position. The remaining 7 parameters (in this order) do the following:
 
 - 3 parameters are coordinates that determine the offset from the reference position. By default they are normal cartesian x,y,z coordinates (same orientation as in the map editor)
 - The next parameter takes values 0 or 1. When set to 1 the 3 coordinate parameters are read as spherical coordinates with the first one being the distance and the last one the angle in the x-y-plane. 
 - The next parameter takes 0 or a game object. If a game object is given the camera/target position is attached to it and follows its movements (e.g. for setting the camera to follow a moving ship). 
 - The second to last parameter takes 0 or 1. If set to 1, the function will evaluate the given coordinate offset in the attached object's coordinate system instead of the map's coordinate system (only works if the function is attached to a game object with the previous parameter). 
-- The last parameter plays the attached object's cinematic animation?
+
+!!! info "Unverified"
+    The last parameter plays the attached object's cinematic animation.
 
 ---
 
-**TestValid:** This function is used to check if a game object is still valid, i.e. alive. It is always needed before using a game object variable for anything else since otherwise the script will crash if the unit died. This is not equivalent to and cannot be replaced by a simple nil check! An invalid game object variable can persist for a while before it gets deleted.
+**TestValid:** This function is used to check if a game object is still valid, i.e. alive. It is always needed before using a game object variable for anything else since otherwise the script will crash if the unit died. This is not equivalent to and cannot be replaced by a simple nil check. An invalid game object variable can persist for a while before it gets deleted.
 
 ---
 
 ## AI scripting
 **Upgrade selection:**
-In the vanilla PurchaseLandUpgradesGeneric script something like `"E_Secure_Area_Upgrade = 0,10"` can be found. Even though only one upgrade can be chosen, the AI has a higher chance of choosing an upgrade from a list with a higher number.
-Locutus: Everything with 10 basically gets researched as soon as its available, everything with 5 soon after and everything with 1 rather sporadic.
+The vanilla PurchaseLandUpgradesGeneric script contains entries such as `"E_Secure_Area_Upgrade = 0,10"`. Even though only one upgrade can be chosen, the AI has a higher chance of choosing an upgrade from a list with a higher number.
+According to Locutus, everything weighted 10 is researched almost as soon as it is available, everything weighted 5 soon after and everything weighted 1 sporadically.
 
 ---
 
 ## Testing
-**Reloading scripts:** When testing lua scripts, usually you don't need to restart the game after changing something. Story scripts are only loaded on battle/GC start, meaning that returning to the main menu is always enough to properly reload the script (also true for xml story files). It is slightly trickier for other scripts (like library scripts), but in general also possible except for evaluator scripts. Making the changes and telling the game to reload the script before returning to the main menu and restarting the scenario seems to help in some cases.
+**Reloading scripts:** A change to a Lua script usually does not require a restart of the game. Story plot scripts are only loaded at the start of a battle or galactic campaign, so returning to the main menu is always enough to reload them (this also applies to XML story files). Other scripts, such as library scripts, are harder to reload but in general reloadable as well, except for evaluator scripts.
+
+!!! info "Unverified"
+    Making the changes and telling the game to reload the script before returning to the main menu and restarting the scenario helps in some cases.
+
+The rules behind this, described in full under [Game-level transitions](lua-script-lifecycle.md#2-game-level-transitions):
+
+- Story plot scripts are not pooled by default, so every campaign or mission start loads them from the file again.
+- A pooled state never loads its file a second time, and returning to the main menu does not empty the pool, so an idle state from an earlier game still runs the code it was loaded with. Loading a save game or starting a skirmish, multiplayer or replay game empties the pool.
+- When the game reloads a changed script, idle states of it are discarded at once; a state that is in use keeps its old code until the object it is attached to is gone.
+- A save game contains the scripts' code, so changes to the file do not reach a game loaded from an existing save. Test script changes on a fresh start, not on an old save.
 
 ---
 
@@ -77,17 +92,17 @@ Locutus: Everything with 10 basically gets researched as soon as its available, 
 
 ---
 
-**SpawnList:** This function is defined in PGSpawnUnits and can be used to spawn entire unit lists at once. It can also automatically set AI usage for the spawned units, however this can cause problems when spawning units for a faction with no AI (see Prevent_AI_Usage in the reference).
+**SpawnList:** This function is defined in PGSpawnUnits and can be used to spawn entire unit lists at once. It calls `Prevent_AI_Usage` on every spawned unit (`Prevent_AI_Usage(true)` when `allow_ai_usage` is false, `Prevent_AI_Usage(false)` otherwise), however this can cause problems when spawning units for a faction with no AI (see [`Prevent_AI_Usage` caveat](../../issues/lua/issues.md#prevent_ai_usage-caveat)).
 
 ---
 
 **Hyperspacing in:** Spawning a unit via script from hyperspace at a pre-placed marker is usually done with this set of commands: 
 ```
-unit = Spawn_Unit(object_type, player, marker_object)[1]
+unit = Spawn_Unit(object_type, marker_object, player)[1]
 unit.Teleport_And_Face(marker_object)
-unit.Hyperspace_In(delay)
+unit.Cinematic_Hyperspace_In(delay)
 ```
-The `Teleport_And_Face` makes sure the unit faces the same direction as the marker. The `[1]` is required since `Spawn_Unit` returns a table with the spawned game object in the first position. The `delay` is given in number of frames not seconds.
+The `Teleport_And_Face` makes sure the unit faces the same direction as the marker. The `[1]` is required since `Spawn_Unit` returns a table with the spawned game object in the first position. `Spawn_Unit` takes the position second and the player third. The engine has no `Hyperspace_In` method on game objects; the method is `Cinematic_Hyperspace_In`. The `delay` is given in number of frames not seconds.
 
 ---
 

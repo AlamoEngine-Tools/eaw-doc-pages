@@ -14,19 +14,26 @@ Visual Studio Code is a free source-code editor made by Microsoft for Windows, L
 
 Official Download from Microsoft: https://code.visualstudio.com
 
-The official VS Code does include some telemetry and tracking that - if you're bothered by that - requires you to actively opt out via adding the following setting in the `settings.json` file:
+The official VS Code includes telemetry and tracking. To opt out, add the following setting to the `settings.json` file:
 
 ```
-"telemetry.enableTelemetry": false
+"telemetry.telemetryLevel": "off"
 ```
 
-Alternatively there is VS Codium which does not include the telemetry, but may not support all packages.
+The older setting `"telemetry.enableTelemetry": false` is deprecated and has been replaced by `telemetry.telemetryLevel`.
 
-## Recommended Extensions
+Alternatively there is [VSCodium](https://vscodium.com/), a community build of VS Code with telemetry disabled, but it may not support all extensions.
 
-For installation instructions and requirements, please refer to the readmes of the packages.
+## Recommended extensions
 
-- [XML Language Support by Red Hat (XML)](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-xml) - Enhances your XML-editing experience by providing:
+The readmes of the packages give the installation instructions and requirements.
+
+- [Alamo Engine Tools - Empire at War Edit](https://marketplace.visualstudio.com/items?itemName=AlamoEngineTools.aet-eaw-edit) - Extension and language server made for Empire at War and Forces of Corruption mod development ([repository](https://github.com/AlamoEngine-Tools/pg-starwarsgame-lsp), [releases](https://github.com/AlamoEngine-Tools/pg-starwarsgame-lsp/releases)). Preview release; Windows x64 only, requires VS Code 1.107 or later. Provides:
+    - XML completions, hover, diagnostics, go to definition, find all references and rename for the game's XML files
+    - Lua completion, navigation and rename for mod scripts
+    - Story, localisation and model preview tooling
+    - After installing, set `aet-eaw-edit.lsp.enabled` to `true` and place a `.pgproj` project file at the root of the mod; see the extension's README for the project file format and all settings
+- [XML Language Support by Red Hat (XML)](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-xml) - Enhances XML editing by providing:
     - Syntax error reporting
     - General code completion
     - Auto-close tags
@@ -65,8 +72,8 @@ For installation instructions and requirements, please refer to the readmes of t
     - EmmyLua Annotation
     - Multi Workspace
     - Semantic Tokens
-    - vscode-lua-format (vscode-lua-format) - Provides auto-format capabilites.
+- [vscode-lua-format](https://marketplace.visualstudio.com/items?itemName=Koihik.vscode-lua-format) - Provides auto-format capabilities for Lua.
 
-## Additional Remarks
+## Additional remarks
 
-To complement the Lua plugin it is recommended to include the [latest version](https://github.com/AlamoEngine-Tools/eaw-emmyluadoc/releases) of [eaw-emmyluadoc](https://github.com/AlamoEngine-Tools/eaw-emmyluadoc) in your mod to further improve syntax highlighting, type checking and code completions.
+To complement the Lua plugin, include the [latest version](https://github.com/AlamoEngine-Tools/eaw-emmyluadoc/releases) of [eaw-emmyluadoc](https://github.com/AlamoEngine-Tools/eaw-emmyluadoc) in the mod to further improve syntax highlighting, type checking and code completions.

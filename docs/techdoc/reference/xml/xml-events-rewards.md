@@ -9,8 +9,9 @@ tags:
 
 #### STORY_CORRUPTION_INCREASED
 * Parameter 1: Planet
+* Parameter 2: [Corruption type](#corruption-types) (optional)
 
-Triggers when the specified planet is corrupted.
+Another name for `STORY_CORRUPTION_CHANGED`: the game treats both names as the same event type, so it also triggers when the corruption of the planet decreases, not only when it increases.
 
 ---
 #### STORY_OPEN_CORRUPTION
@@ -20,15 +21,17 @@ Triggers when the corruption menu for the specified planet is opened with a defi
 
 ---
 #### STORY_CORRUPTION_TACTICAL_FAILED
-* Parameter 1: Planet(?)
+* Parameter 1: Planet
+* Parameter 2: [Corruption type](#corruption-types) (optional)
 
-Never used.
+Never used. Triggers when a corruption tactical mission on the planet fails. Takes the same parameters as `STORY_CORRUPTION_CHANGED`.
 
 ---
 #### STORY_CORRUPTION_TACTICAL_COMPLETE
-* Parameter 1: Planet(?)
+* Parameter 1: Planet
+* Parameter 2: [Corruption type](#corruption-types) (optional)
 
-Never used.
+Never used. Triggers when a corruption tactical mission on the planet is completed. Takes the same parameters as `STORY_CORRUPTION_CHANGED`.
 
 ---
 #### STORY_GALACTIC_SABOTAGE
@@ -40,12 +43,18 @@ Triggers when the specified building is destroyed using the sabotage ability.
 #### STORY_BUY_BLACK_MARKET
 * Parameter 1: Tech
  
-Triggers once the given tech is bought. Tech is presumably the xml name of the tech type as defined in BlackMarketItems.
+Triggers once the given tech is bought.
+
+!!! info "Unverified"
+    Tech is the xml name of the tech type as defined in BlackMarketItems.
 
 ---
 #### STORY_GARRISON_UNIT
+* Parameter 1: Unit type
+* Parameter 2: Number (count, optional)
+* Parameter 3: [Filter](#filter-types) (optional)
 
-Never used.
+Never used. Triggers when a unit of the given type is garrisoned. Parameters 2 and 3 are read the same way as for `STORY_DEFEAT_HERO`.
 
 ---
 #### STORY_CORRUPTION_CHANGED
@@ -54,20 +63,22 @@ Never used.
 
 ---
 #### STORY_CAPTURE_STRUCTURE
-* Parameter 1: ?
-* Parameter 2: ?
+* Parameter 1: Structure type
+* Parameter 2: Faction
 
-Parameters are probably structure type and faction.
+The parameters are the structure type and the faction that captures it; the game looks up both names and requires the faction to exist.
 
 ---
 #### STORY_OBJECTIVE_TIMEOUT
+* Parameter 1: Number (seconds)
+* Parameter 2: Objective text identifier (as used by `ADD_OBJECTIVE`)
 
-Never used. Would probably take an objective text string like the rewards setting objectives and the timeout.
+Never used. Triggers when the objective has not been completed within the given time.
 
 ---
 #### STORY_INVASION_BOUNCED
 * Parameter 1: Planet
-* Parameter 5: ? (Used in demo script)
+* Parameters 2 to 7: as for `STORY_ENTER`; the demo script's parameter 5 is the stealth flag.
 
 ---
 #### STORY_MISSION_LOST
@@ -76,11 +87,14 @@ Never used. Would probably take an objective text string like the rewards settin
 ---
 #### STORY_FLEET_BOUNCED
 * Parameter 1: Planet
+* Parameters 2 to 7: as for `STORY_ENTER`
+
+Triggers when a fleet is bounced away from a planet, e.g. one restricted with `SET_PLANET_RESTRICTED`.
 
 ---
 #### STORY_MOVIE_DONE
 
-No parameters. Triggers when a movie started by `START_MOVIE` finishes.
+No parameters. Triggers when a movie started by `START_MOVIE` finishes. `START_MOVIE` pauses the game, and evaluating this event is what resumes it.
 
 ---
 #### STORY_VICTORY
@@ -96,7 +110,11 @@ Triggers when the specified faction wins.
 ---
 #### STORY_LOAD_TACTICAL_MAP
 
-Never used. Uses Planet, Hero, GROUND/SPACE?
+* Parameter 1: Planet
+* Parameter 2: Hero unit type (optional)
+* Parameter 3: GROUND/SPACE
+
+Never used. Triggers when a tactical battle on the planet is loaded.
 
 ---
 #### STORY_FLAG
@@ -104,29 +122,37 @@ Never used. Uses Planet, Hero, GROUND/SPACE?
 * Parameter 2: Number
 * Parameter 3: [Comparison type](#comparison-types)
 
-Triggers when the comparison becomes true. Flags can be set and manipulated by `SET_FLAG` and `INCREMENT_FLAG`. Note that the event can stop working if the flag name is too long (32 character limit (?)).
+Triggers when the comparison becomes true. Flags can be set and manipulated by `SET_FLAG` and `INCREMENT_FLAG`. Flag names are case-insensitive and cut to 31 characters, so two names that only differ after the 31st character are the same flag. Flags are shared by all plots, galactic and tactical alike. `NOT_EQUAL_TO` is accepted but never triggers the event.
 
 ---
 #### STORY_DIFFICULTY_LEVEL
+* Parameter 1: Difficulty level name
 
-Never used. Presumably, the difficulty level has to be specified in some way.
+Never used. Triggers when the game is played at the given difficulty level. An unrecognised name is reported as a warning.
 
 ---
 #### STORY_UNIT_PROXIMITY
-* Parameter 1: Unit type?
+* Parameter 1: Unit type (unverified)
 * Parameter 2: Unit type
 * Parameter 3: Distance
 
-Used without parameter 1 in campaign. Without parameter 1 it triggers for every player unit?
+Used without parameter 1 in campaign.
+
+!!! info "Unverified"
+    Without parameter 1 it triggers for every player unit.
 
 ---
 #### STORY_GUARD_UNIT
-* Parameter 1: Unit type
-* Parameter 2: Unit type
+* Parameter 1: Unit type (guard)
+* Parameter 2: Unit type (guarded)
+
+Triggers when a unit of the first type is ordered to guard a unit of the second type. With lists, the game pairs the n-th guard type only with the n-th guarded type; single values work as expected.
 
 ---
 #### STORY_ATTACK_HARDPOINT
 * Parameter 1: Hard point name
+
+Triggers when the player orders units to attack the hard point, not when the hard point takes damage.
 
 ---
 #### STORY_FULL_STOP
@@ -142,7 +168,10 @@ Never used.
 #### STORY_COMMAND_UNIT
 * Parameter 1: Unit type
 * Parameter 2: Unit type (optional)
-* Parameter 3: Number (Probably distance, optional)
+* Parameter 3: Number (optional)
+
+!!! info "Unverified"
+    Parameter 3 is a distance.
 
 ---
 #### STORY_SELECT_UNIT
@@ -152,28 +181,33 @@ Never used.
 #### STORY_AI_NOTIFICATION
 * Parameter 2: String identifier
 
-Triggered by calling the `Story_Event` function from Lua with the identifier as parameter. According to the story scripting tutorial that came with the map editor it also takes a comma separated list of planets. This might work if `Story_Event` actually takes a planet object as second parameter.
+Triggered by calling the `Story_Event` function from Lua with the identifier as parameter. According to the story scripting tutorial that came with the map editor it also takes a comma separated list of planets.
+
+!!! info "Unverified"
+    The planet list works if `Story_Event` takes a planet object as second parameter.
 
 ---
 #### STORY_TRIGGER
 
-No parameters. Triggers immediately (once the prerequites are met).
+No parameters. Triggers immediately (once the prerequisites are met).
 
 ---
 #### STORY_GENERIC
 * Parameter 1: [Generic event type](#generic-event-types)
 
-Multiple whitespace-separated event types can be specified?
+Multiple whitespace-separated event types can be specified; any one of them triggers the event. The names are compared case-insensitively.
 
 ---
 #### STORY_FOG_POSITION_REVEAL
+* Parameter 1: Position (three numbers: x y z)
 
-Never used.
+Never used. Triggers when the position is revealed from the fog of war.
 
 ---
 #### STORY_FOG_OBJECT_REVEAL
+* Parameter 1: Object type
 
-Never used. Causes random crashes.
+Never used. Triggers when an object of the given type is revealed from the fog of war. Causes random crashes.
 
 ---
 #### STORY_SPEECH_DONE
@@ -213,55 +247,73 @@ Triggers when a space battle at the specified planet is triggered and loads the 
 
 ---
 #### STORY_PLANET_DESTROYED
-* Parameter 1: ? (optional if used at all)
-* Parameter 2: Planet
+* Parameter 1: Planet (optional; empty matches any planet)
+* Parameter 2: [Filter](#filter-types)
+
+The game reads this event with the parameters of `STORY_ENTER`, so the planet goes into parameter 1. The vanilla script puts the planet name into parameter 2, where it is read as a filter name; with parameter 1 empty, that event follows from these rules to trigger for any destroyed planet.
 
 ---
 #### STORY_REINFORCE
+* Parameter 1: Unit type
+* Parameter 2: Number (count, optional)
+* Parameter 3: [Filter](#filter-types) (optional)
 
-Never used.
+Never used. Triggers when units of the given type are brought in as reinforcements in a tactical battle.
 
 ---
 #### STORY_RETREAT
+* Parameter 1: [Filter](#filter-types)
 
-Never used.
+Never used. Triggers when a side retreats from a tactical battle.
 
 ---
 #### STORY_LOSE_BATTLES
 * Parameter 1: Number
-* Parameter 2: GROUND/SPACE
-* Parameter 3: [Filter](#filter-types)
+* Parameter 2: GROUND/SPACE/EITHER
+* Parameter 3: [Contains filter](#contains-filters) followed by [unit categories](#unit-categories) (optional)
+* Parameter 4: Planet (optional)
+
+Parameter 3 is only read when it holds at least two entries (a contains filter and one or more unit categories); a single entry such as `FILTER_FRIENDLY_ONLY`, as used in the vanilla scripts, is ignored.
 
 ---
 #### STORY_WIN_BATTLES
 * Parameter 1: Number
-* Parameter 2: GROUND/SPACE
-* Parameter 3: [Filter](#filter-types)
+* Parameter 2: GROUND/SPACE/EITHER
+* Parameter 3: [Contains filter](#contains-filters) followed by [unit categories](#unit-categories) (optional)
+* Parameter 4: Planet (optional)
+
+Parameter 3 is only read when it holds at least two entries (a contains filter and one or more unit categories); a single entry such as `FILTER_FRIENDLY_ONLY`, as used in the vanilla scripts, is ignored.
 
 ---
 #### STORY_DEFEAT_HERO
 * Parameter 1: Unit type
+* Parameter 2: Number (count, optional)
+* Parameter 3: [Filter](#filter-types) (optional)
 
 ---
 #### STORY_CAPTURE_HERO
+* Parameter 1: Unit type
+* Parameter 2: Number (count, optional)
+* Parameter 3: [Filter](#filter-types) (optional)
 
-Never used, most likely a left-over.
+Never used, a left-over: the game never raises this event, so it can never trigger.
 
 ---
 #### STORY_ELAPSED
 * Parameter 1: Number (seconds)
 
-Triggers after the given time has passed.
+Triggers after the given time has passed. The time is counted from the moment the event becomes active (its prerequisites are met), not from the start of the campaign. Time during which the galactic game is paused does not count.
 
 ---
 #### STORY_CONQUER_COUNT
 * Parameter 1: Number
 
-Never used. Tends to be broken, use Lua instead.
+Never used. Unreliable; Lua is the recommended alternative.
 
 ---
 #### STORY_ACCUMULATE
 * Parameter 1: Number
+* Parameter 2: [Comparison type](#comparison-types) (optional)
 
 Triggers when the given number of credits have been accumulated by the player.
 
@@ -278,7 +330,7 @@ Triggers when the given number of credits have been accumulated by the player.
 ---
 #### STORY_POLITICAL_CONTROL
 
-Never used, probably left-over.
+Never used, a left-over. The game has no implementation for this event type: an event of this type is dropped when the plot is loaded.
 
 ---
 #### STORY_TECH_LEVEL
@@ -286,33 +338,44 @@ Never used, probably left-over.
 
 ---
 #### STORY_BEGIN_ERA
+* Parameter 1: Number (era)
 
-Nver used, probably left-over.
+Never used. Shares its implementation with `STORY_TECH_LEVEL`.
+
+!!! info "Unverified"
+    It is a left-over.
 
 ---
 #### STORY_TACTICAL_DESTROY
 * Parameter 1: Unit type (comma separated list as "or" condition)
+* Parameter 2: Planet (leave empty)
 * Parameter 3: Number
+* Parameter 4: [Filter](#filter-types) (optional)
+
+The vanilla scripts leave parameter 2 empty. With an empty planet the event counts the destroyed objects directly; the planet and filter are only consulted when a planet is given.
 
 ---
 #### STORY_DESTROY_BASE
+* Parameter 1: Planet (optional)
+* Parameter 2: SPACE/GROUND/EITHER
+* Parameter 3: [Filter](#filter-types) (owner of the base)
 
-Never used. Takes a planet, SPACE/GROUND/EITHER and a [filter](#filter-types)(?)
+Never used.
 
 ---
 #### STORY_DESTROY
 * Parameter 1: Unit type
-* Parameter 2: Planet?
+* Parameter 2: Planet (optional)
 * Parameter 3: Number
-
-According to the map editor doc there are also parameters for who does the destroying and for a filter.
+* Parameter 4: [Filter](#filter-types) (optional)
 
 ---
 #### STORY_CONSTRUCT_LEVEL
 * Parameter 1: Planet
 * Parameter 2: Number
 * Parameter 3: GROUND/SPACE
-* Parameter 4: [Filter](#filter-types)(?)
+
+A parameter 4 (as in the vanilla tutorial script) is not read by the game.
 
 ---
 #### STORY_CONSTRUCT
@@ -320,11 +383,12 @@ According to the map editor doc there are also parameters for who does the destr
 * Parameter 2: Number
 * Parameter 3: [Filter](#filter-types)
 
-Multiple unit types can be set (whitespace separated), however the counting behaves strangely. The event will trigger if the given number of units of the first type is built or one unit of the other types.
+Multiple unit types can be set (whitespace separated), however the counting is irregular. The event triggers if the given number of units of the first type is built or one unit of the other types.
 
 ---
 #### STORY_CONQUER
 * Parameter 1: Planet
+* Parameter 2: Number (count, optional)
 * Parameter 3: [Filter](#filter-types)
 
 ---
@@ -332,14 +396,17 @@ Multiple unit types can be set (whitespace separated), however the counting beha
 * Parameter 1: Planet
 * Parameter 2: [Filter](#filter-types)
 * Parameter 3: Unit type
-* Parameter 4: Unit type (required orbiting unit?)
+* Parameter 4: Unit type (units already in orbit at the planet)
+* Parameters 5 to 7: as for `STORY_ENTER`
+
+Read with the same parameters as `STORY_ENTER`.
 
 ---
 #### STORY_ENTER
 * Parameter 1: Planet (can be whitespace separated list)
 * Parameter 2: [Filter](#filter-types)
 * Parameter 3: Unit type (Comma or whitespace separated list for "and" condition)
-* Parameter 4: Unit type (Units that must be present iirc)
+* Parameter 4: Unit type (Units that must already be in orbit at the planet, not in the arriving fleet)
 * Parameter 5: 1/0 (Allow stealth units)
 * Parameter 6: 1/0 (Allow only specified units to enter)
 * Parameter 7: 1/0 (Allow only raid fleets)
@@ -431,6 +498,8 @@ Never used.
 * Parameter 2: [Ability slot](#galactic-ability-slots)
 * Parameter 3: 1/0
 
+`NEUTRALIZE_HERO_SLOT` is accepted but does nothing.
+
 ---
 #### GIVE_BLACK_MARKET
 * Parameter 1: Black market item
@@ -438,7 +507,7 @@ Never used.
 ---
 #### REMOVE_CORRUPTION
 * Parameter 1: Planet
-* Parameter 2: Number (transition time)
+* Parameter 2: Number (transition time in seconds, defaults to 10)
 
 Never used.
 
@@ -460,12 +529,12 @@ No parameters. Enables collecting credits for killed enemies in tactical battles
 #### FINISHED_TUTORIAL
 * Parameter 1: Campaign name
 
-Marks a tutorial as completed.
+Marks a tutorial as completed. The name is stored in the player profile exactly as written, without case folding; the vanilla scripts write it in upper case (`TUTORIAL_ONE`).
 
 ---
 #### HIDE_STEAL_SLOT
 
-No parameter.
+No parameter. Undoes `SHOW_STEAL_SLOT`: the slot is no longer forced to be shown.
 
 ---
 #### SHOW_STEAL_SLOT
@@ -474,7 +543,7 @@ No parameter.
 ---
 #### HIDE_RAID_SLOT
 
-No parameter.
+No parameter. Undoes `SHOW_RAID_SLOT`: the slot is no longer forced to be shown.
 
 ---
 #### SHOW_RAID_SLOT
@@ -483,7 +552,7 @@ No parameter.
 ---
 #### HIDE_SMUGGLE_SLOT
 
-No parameter.
+No parameter. Undoes `SHOW_SMUGGLE_SLOT`: the slot is no longer forced to be shown.
 
 ---
 #### SHOW_SMUGGLE_SLOT
@@ -526,7 +595,7 @@ No parameters.
 ---
 #### START_CINEMATIC_MODE
 
-No parameters. Might be tutorial specific.
+No parameters. Starts the galactic planet tour used by the tutorials; it lasts until `STOP_CINEMATIC_MODE`.
 
 ---
 #### SET_ADVISOR
@@ -560,7 +629,7 @@ No parameters.
 #### ENABLE_OVERWHELMING_ODDS
 * Parameter 1: 1/0
 
-Never used.
+Never used. Does nothing: the game accepts the reward name but has no action wired to it.
 
 ---
 #### UNPAUSE_GALACTIC
@@ -615,7 +684,10 @@ For the hint to be seen, a planet where the unit can be built as well as the rig
 ---
 #### DISABLE_DIRECT_INVASION
 
-No parameters. I don't think this does anything anymore.
+No parameters.
+
+!!! info "Unverified"
+    This does not do anything anymore.
 
 ---
 #### ENABLE_DIRECT_INVASION
@@ -672,11 +744,11 @@ Never used.
 * Parameter 3: Unit type (variable that is inserted into the text; use `%s` as placeholder in the text; other values may be possible as well)
 * Parameter 4: 1/0 (use to remove a text; `remove` may also be a possible value)
 * Parameter 5: 1/0 (Use teletype display)
-* Parameter 6: Text color (r,g,b)
+* Parameter 6: Text color (three space-separated numbers: r g b)
 * Parameter 7: Text color scheme (`Task`, `Hint`, `System`, `Speech`, `Alien_Speech`)
 * Parameter 8: Speech from SpeechEvents.xml
 * Parameter 9: Movie from Movies.xml (Hologram shown by the droid advisor)
-* Parameter 10: 1/0 (Loop the movie?; stop using `STOP_COMMANDBAR_MOVIE`)
+* Parameter 10: 1/0 (unverified: loop the movie; stop using `STOP_COMMANDBAR_MOVIE`)
 
 Functionally just a combination of `SCREEN_TEXT`, `SPEECH` and `COMMANDBAR_MOVIE`.
 
@@ -691,7 +763,7 @@ Functionally just a combination of `SCREEN_TEXT`, `SPEECH` and `COMMANDBAR_MOVIE
 #### FORCE_RETREAT
 * Parameter 1: Faction
 
-Never used.
+Never used. Only has an effect in a tactical battle, and is skipped while a retreat is already underway.
 
 ---
 #### LOCK_UNIT
@@ -731,10 +803,12 @@ No parameters. Stops movies like the droid advisor holograms.
 #### START_MOVIE
 * Parameter 1: Movie from Movies.xml
 
+Pauses the game while the movie plays. The game is resumed when a `STORY_MOVIE_DONE` event is evaluated, so a plot using this reward should have a `STORY_MOVIE_DONE` event armed; without one the game can stay paused.
+
 ---
 #### USE_RETRY_DIALOG
 
-No parameters. Will cause the retry dialog to open if the player loses. The retry option will load the last (auto?) save. On steam this is currently somewhat broken since the auto-saves were disabled.
+No parameters. Will cause the retry dialog to open if the player loses. The retry option loads the last auto-save. On Steam this is partly broken, because the auto-saves were disabled.
 
 ---
 #### ACTIVATE_RETRY_DIALOG
@@ -751,14 +825,15 @@ Enables or disables the automatic planet reveal in galactic mode.
 #### TRIGGER_EVENT
 * Parameter 1: Event name
 
-Can trigger events across plots (?)
+!!! info "Unverified"
+    Can trigger events across plots.
 
 ---
 #### SET_SPAWN
-* Parameter 1: ? (Probably indigenous spawner type)
+* Parameter 1: Indigenous spawner type
 * Parameter 2: Number (Spawn percentage of some form)
 
-Never used.
+Never used. Both parameters are required; otherwise the reward only reports an error. Changes the indigenous spawn distribution.
 
 ---
 #### SET_TECH_LEVEL
@@ -788,11 +863,19 @@ No parameters. Never used. There are game constants entries that look like confi
 * Parameter 5: Faction (Defender)
 * Parameter 6: Unit type (pathfinder)
 * Parameter 7: Plot file name
-* Parameter 8: 1/0 (Use sandbox units; only for the player, AI will never have their sandbox units iirc)
-* Parameter 9: 1/0/2 (Use default intro camera squence. `2` will keep the fleet in hyperspace until `Resume_Hyperspace_In` is called from lua; note that certain player actions will also cause the fleet to jump in so controls must be locked while the fleet is suspended in hyperspace)
+* Parameter 8: 1/0 (Use sandbox units; only for the player)
+
+    !!! info "Unverified"
+        AI will never have their sandbox units.
+
+* Parameter 9: 1/0/2 (Use default intro camera sequence. `2` will keep the fleet in hyperspace until `Resume_Hyperspace_In` is called from lua; note that certain player actions will also cause the fleet to jump in so controls must be locked while the fleet is suspended in hyperspace)
 * Parameter 10: 1/0 (Start faded out)
 * Parameter 11: 1/0 (Start letterboxed)
-* Parameter 12: [Battle result](#battle-result-types) (Only executed if the player wins, iirc)
+* Parameter 12: [Battle result](#battle-result-types)
+
+    !!! info "Unverified"
+        Only executed if the player wins.
+
 * Parameter 13: 1/0 (Show battle pending dialog)
 * Parameter 14: 1/0 (Allow pathfinder)
 
@@ -807,7 +890,7 @@ Reset an event so it can be triggered again
 * Parameter 1: Branch name
 * Parameter 2: Event name
 
-Reset all events of an entire branch so they can be triggered again. Also appears to trigger an optional event.
+Reset all events of an entire branch so they can be triggered again. If parameter 2 is given, that event is triggered after the reset.
 
 ---
 #### DISABLE_REINFORCEMENTS
@@ -818,7 +901,8 @@ Applies to all players if no faction is specified.
 
 ---
 #### REVEAL_ALL_PLANETS
-* Parameter 1: 1/0
+
+No parameters. Reveals all planets on the galactic map for the local player.
 
 ---
 #### STORY_GOAL_COMPLETED
@@ -828,35 +912,40 @@ Applies to all players if no faction is specified.
 #### HIGHLIGHT_OBJECT
 * Parameter 1: Object type
 * Parameter 2: 1/0
-* Parameter 3: Number (Radar ID (?))
+* Parameter 3: Number (Radar ID)
 
-Highlights first found object. If Parameter 3 is not `-1`, a radar blip is added at the objects position
+!!! info "Unverified"
+    Parameter 3 is the radar ID.
+
+Highlights first found object. If Parameter 3 is not `-1`, a radar blip is added at the object's position.
 
 ---
 #### INCREMENT_FLAG
 * Parameter 1: Flag name
 * Parameter 2: Number (amount)
 
-The given amount to increment can be positive or negative.
+The given amount to increment can be positive or negative. The flag must have been created with `SET_FLAG` first; incrementing an undefined flag is reported as an error.
 
 ---
 #### SET_FLAG
 * Parameter 1: Flag name
 * Parameter 2: Number
 
+Creates the flag if needed and sets it to the value. Flag names are case-insensitive and cut to 31 characters, so two names that only differ after the 31st character are the same flag. All plots share the same flags.
+
 ---
 #### DUAL_FLASH
-* Parameter 1: Number (duration in seconds)?
-* Parameter 2: Number (delay between flashes)?
+* Parameter 1: Number (duration in seconds)
+* Parameter 2: Number (delay between flashes)
 
-Never used. According to the map editor doc it requires two additional flash events afterwards which will then be flashed alternately back and forth.
+Never used. Both parameters are required; if either is empty the reward does nothing. According to the map editor doc it requires two additional flash events afterwards which will then be flashed alternately back and forth.
 
 ---
 #### REVEAL_PLANET
 * Parameter 1: Planet
 * Parameter 2: 1/0
 
-Cannot be used to force un-reveal a planet that would is revealed because the player borders it.
+Cannot be used to force un-reveal a planet that is revealed because the player borders it.
 
 ---
 #### FLASH_UNIT
@@ -878,7 +967,7 @@ Never used.
 ---
 #### VICTORY
 * Parameter 1: Faction
-* Parameter 2: 1/0 (`1` will not show the victory text or play the VO)
+* Parameter 2: 1/0 (`1` will not show the victory text or play the VO, and shortens the delay before the victory from 7 to 1 second)
 
 ---
 #### DESTROY_OBJECT
@@ -903,18 +992,18 @@ Destroys the first found object of the given type.
 ---
 #### ENABLE_AUTORESOLVE
 
-Disabled.
+Disabled. Does nothing except write a log line; use `RESTRICT_AUTORESOLVE` per planet instead.
 
 ---
 #### DISABLE_AUTORESOLVE
 
-Disabled.
+Disabled. Does nothing except write a log line; use `RESTRICT_AUTORESOLVE` per planet instead.
 
 ---
 #### SET_TACTICAL_MAP
 * Parameter 1: Map name
 * Parameter 2: GROUND/SPACE/EITHER
-* Parameter 3: Faction (Map owner)
+* Parameter 3: Faction (Map owner): one of `Rebel`, `Empire`, `Pirates`, `Underworld` or `Hutts`, compared case-insensitively
 
 Never used.
 
@@ -923,10 +1012,14 @@ Never used.
 * Parameter 1: Unit type
 * Parameter 2: Ability name
 
+Despite the name, only affects the plot's local player.
+
 ---
 #### NEW_POWER_FOR_ALL
 * Parameter 1: Unit type
 * Parameter 2: Ability name
+
+Despite the name, only affects the plot's local player.
 
 ---
 #### SET_HEALTH
@@ -947,10 +1040,14 @@ Never used.
 * Parameter 1: Campaign name (128 characters maximum)
 * Parameter 2: Number (faction index)
 
+Both parameters are required. The campaign that is started is the first campaign in the same `Campaign_Set` as the named one whose `Starting_Active_Player` is the faction at the given position in the faction list (counting from 0 in the order of Factions.xml), which is not necessarily the named campaign itself.
+
 ---
 #### INVADE_PLANET
 * Parameter 1: Planet
 * Parameter 2: Unit type (optional)
+
+Parameter 2 does not filter anything: a transport whose unit type differs is only noted in the log, and the invasion is issued either way.
 
 ---
 #### DISABLE_BRANCH
@@ -963,7 +1060,8 @@ Never used.
 * Parameter 2: 1/0 (disable)
 * Parameter 3: 1/0 (global)
 
-Parameter three (should) allow disabling either the given event in the same plot or all events with this name in any plot.
+!!! info "Unverified"
+    Parameter 3 allows disabling either the given event in the same plot or all events with this name in any plot.
 
 ---
 #### TRIGGER_AI
@@ -982,6 +1080,8 @@ All eligible fleets are merged and moved to the target.
 ---
 #### ENABLE_VICTORY
 * Parameter 1: 1/0
+
+Works as a counter: every `0` adds one lock on victory and every `1` removes one, so two `0` rewards need two `1` rewards before a victory can be declared again.
 
 ---
 #### ENABLE_FOW
@@ -1020,7 +1120,7 @@ Never used.
 ---
 #### PAUSE_GAME
 
-Never used.
+Never used. Opens the options menu rather than pausing the game directly; a second `PAUSE_GAME` closes it again.
 
 ---
 #### ZOOM_OUT
@@ -1036,24 +1136,26 @@ No parameters.
 #### SWITCH_SIDES
 * Parameter 1: Faction
 
-Switch the player controlled faction.
+Switch the player controlled faction. Does nothing in multiplayer games.
 
 ---
 #### PICK_PLANET
 * Parameter 1: [Filter](#filter-types)
 * Parameter 2: Tag
 
-Never used. This takes a [filter](#filter-types) and an identifier. The event will assign a planet that fulfills the filter condition to the identifier which can then be used e.g. in the Story_Var tag.
+Never used. This takes a [filter](#filter-types) and an identifier. The event will assign the first planet (in object order, not a random one) that fulfills the filter condition to the identifier which can then be used e.g. in the Story_Var tag.
 
 ---
 #### ENABLE_EVENT
 * Parameter 1: [Tutorial event type](#tutorial-event-types)
 * Parameter 2: Event type parameter (e.g. GUI element)
+* Parameter 3: Second event type parameter (optional)
 
 ---
 #### DISABLE_EVENT
 * Parameter 1: [Tutorial event type](#tutorial-event-types)
 * Parameter 2: Event type parameter (e.g. GUI element)
+* Parameter 3: Second event type parameter (optional)
 
 ---
 #### SCREEN_TEXT
@@ -1061,8 +1163,8 @@ Never used. This takes a [filter](#filter-types) and an identifier. The event wi
 * Parameter 2: Number (seconds), defaults to 5
 * Parameter 3: Unit type (variable that is inserted into the text; use `%s` as placeholder in the text)
 * Parameter 4: `remove`
-* Parameter 5: 1/0 (Use teletyping?)
-* Parameter 6: Text color (r,g,b)
+* Parameter 5: 1/0 (unverified: use teletyping)
+* Parameter 6: Text color (three space-separated numbers: r g b)
 * Parameter 7: Text color scheme (`Task`, `Hint`, `System`, `Speech`, `Alien_Speech`)
 
 Shows a text in the upper left corner for the given number of seconds. Use `-1` to keep the text on-screen indefinitely. The text can be removed again by using the event again with the same text file identifier and non-empty parameter 4.
@@ -1077,9 +1179,13 @@ Remove a flash.
 #### FLASH_PLANET_GUI
 * Parameter 1: Planet
 * Parameter 2: [Flash type](#flash-types)
-* Parameter 3: Fleet number (0,1,2(?))
+* Parameter 3: Fleet number
+
+    !!! info "Unverified"
+        The fleet number is 0, 1 or 2.
+
 * Parameter 4: Identifier (see `HIDE_TUTORIAL_CURSOR`)
-* Parameter 5: True/False (should persist?)
+* Parameter 5: True/False (unverified: whether the flash persists)
 
 ---
 #### FLASH_GUI
@@ -1102,7 +1208,10 @@ Never used.
 * Parameter 2: Value
 * Parameter 3: Planet
 
-Never used. The ground base changes don't seem to work. The starbase change seems to work but it throws an assertion error.
+Never used.
+
+!!! info "Unverified"
+    The ground base changes do not work. The starbase change works but raises an assertion error.
 
 ---
 #### STORY_ELEMENT
@@ -1190,11 +1299,15 @@ Makes a locked unit buildable and optionally locks a unit to replace at the same
 
 * REGION_SELECTION
 * REGION_PRODUCTION
-* REGION_ORGANIZE - consists of fleet slots, land slots, special structure slots in that order (?)
+* REGION_ORGANIZE
+
+    !!! info "Unverified"
+        Consists of fleet slots, land slots, special structure slots in that order.
+
 * REGION_NONE
 
 
-# Unit categories
+# Unit categories<a name="unit-categories"></a>
 
 * CLASS_SUPER
 * CLASS_CAPITAL
@@ -1205,7 +1318,7 @@ Makes a locked unit buildable and optionally locks a unit to replace at the same
 * CLASS_FIGHTER
 
 
-# Contains filters
+# Contains filters<a name="contains-filters"></a>
 
 * ENEMY_ONLY_CONTAINS
 * ENEMY_CONTAINS
@@ -1272,15 +1385,14 @@ Makes a locked unit buildable and optionally locks a unit to replace at the same
 
 # Generic event types<a name="generic-event-types"></a>
 
-Possible values for the generic story event:
+Possible values for the generic story event. These are the names the game raises by itself; they are compared case-insensitively. A `STORY_GENERIC` event naming anything else can only be triggered by `TRIGGER_EVENT` or from Lua.
 
 * retreat_complete
 * retreat_clicked
 * battle_end_closed
 * click
-* right_click
 * slice_slot
-* ability_slot(?)
+* ability_slot
 * slice_dialog
 * slice
 * open_black_market_menu
@@ -1290,20 +1402,31 @@ Possible values for the generic story event:
 * land_to_space
 * merge_fleets
 * drag_land_to_space
+* drag_unit
 * corruption_dialog
+* choose_corruption_option
+* close_corruption_dialog
 * increase_corruption
-* decrease_corruption(?)
+* decrease_corruption
 * super_laser_fired
 * start_bombard
 * CLOSE_STORY_DIALOG
 * fleet_tooltip
 * land_tooltip
+* tooltip
 * start_hyperspace
 * zoomed_in
 * zoomed_out
+* next_planet
+* prev_planet
+* previous_planet
 * activate_deployed_ability
 * hero_neutralized
 * drag_select
+* end_setup
+* Continue_Tutorial
+
+`right_click` is not raised by the game.
 
 
 # Planet visibility modifiers<a name="planet-visibility-types"></a>
@@ -1311,7 +1434,7 @@ Possible values for the generic story event:
 * Maximum
 * None (removes any previously applied modifiers)
 
-To be tested (some are definitely relics from earlier stages of the game):
+Untested values (some are relics from earlier stages of the game):
 
 * Planet_Owner
 * Underworld_Default

@@ -14,7 +14,7 @@ tags:
 
 Opens a message box that contains the handled event and its parameters.
 
-!!! Warning "Debug Build Required"
+!!! warning "Deactivated in the release game"
 
 ---
 
@@ -22,32 +22,32 @@ Opens a message box that contains the handled event and its parameters.
 
 Opens a message box that contains the input string.
 
-!!! Warning "Debug Build Required"
+!!! warning "Deactivated in the release game"
 
 ---
 
 ### `function ScriptMessage(...)`
 
-Prints a message to the `AILog.txt`if the command `aiff script` has been used in the ingame console.
+Prints a message to the `AILog.txt` if the command `aiff script` has been used in the ingame console.
 
 ---
 
 ### `function DebugMessage(...)`
 
-Prints a debug message to the `AILog.txt`if the command `aiff script` has been used in the ingame console.
+Prints a debug message to the `AILog.txt` if the command `aiff script` has been used in the ingame console.
 
 ---
 
 ### `function OutputDebug(...)`
 
 Prints a debug message directly to the `LogFile.txt`.
-Usually used as Error Log.
+Usually used as error log.
 
 ---
 
 ### `function ScriptError(...)`
 
-Prints an error log to `LogFile.txt` and `AILog.txt` including a stack trace.
+Prints an error log to `LogFile.txt` and `AILog.txt` including a stack trace, then calls [`ScriptExit()`](pgbase.md#function-scriptexit "PGBase.ScriptExit()"), which stops the whole script.
 
 ---
 

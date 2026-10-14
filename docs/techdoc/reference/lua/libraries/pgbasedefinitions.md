@@ -7,27 +7,27 @@ tags:
 
 # `PGBaseDefinitions.lua`
 
-`PGBaseDefinitions.lua` is called by pretty much every script in the game and introduces a wide array of generic variables that are being used throughout the scripts.
+`PGBaseDefinitions.lua` is used by nearly every script in the game and introduces a wide array of generic variables that are used throughout the scripts.
 
-## Direct Imports
+## Direct imports
 
 * [`PGBase.lua`](pgbase.md "PGBase.lua")
 
-## Indirect Dependencies
+## Indirect dependencies
 
 * [`PGDebug.lua`](pgdebug.md "PGDebug.lua")
 
 ---
 
-## Defined Globals
+## Defined globals
 
-These values are valid throughout every script. It is advised to not change them unless you know exactly what you are doing.
+These values are valid throughout every script. Changing them is not advised without a specific reason.
 
 ```lua tab="Bad Weight"
 BAD_WEIGHT = -1000000000000000000.0
 ```
 
-```lua tab="Big FLoat"
+```lua tab="Big Float"
 BIG_FLOAT = 1000000000000000000.0
 ```
 
@@ -43,14 +43,14 @@ collectgarbage(256)
 
 ### `function Common_Base_Definitions()`
 
-This function declares the variables that are commonly used throughout scripts and sometimes referenced in evaluations. Usually variables are either initialised with `nil` or as empty tables. Some of the values seem to be initialised from `C++` so changing them is not advised.
+This function declares the variables that are commonly used throughout scripts and sometimes referenced in evaluations. Usually variables are either initialised with `nil` or as empty tables. `Object`, `Target`, `AITarget`, `FreeStore`, `PlayerObject`, `LastService` and `Budget` are set by the engine for the script kinds that use them, after `Base_Definitions()` has run, so changing them is not advised. Clearing them keeps the next owner of a reused pooled state from inheriting the previous owner's values; see [Lifecycle of one script state](../lua-script-lifecycle.md#1-lifecycle-of-one-script-state).
 
-??? Note "Definitions"
+??? note "Definitions"
 
     * `ThreadValue.Reset()`  
-      Resets any set thread values for the given thread.
+      Clears the values stored with `ThreadValue.Set(...)`. The store belongs to the script state and survives reuse of a pooled state, so without this call the next owner would see the previous owner's thread values.
     * `GetEvent.Reset()`  
-      Clears all events that might have fired for the given thread.
+      Clears the script's whole event queue, for all of its threads. Like the thread values, the queue survives reuse of a pooled state.
     * `TimerTable = {}`  
       Creates the table used to register timer events.
     * `DeathTable = {}`  
@@ -62,33 +62,36 @@ This function declares the variables that are commonly used throughout scripts a
     * `CurrentEvent = nil`  
       Reference to the currently fired event.
     * `EventParams = nil`  
-      Reference to the event's parameters
+      Reference to the event's parameters.
     * `block = nil`  
-      Reference to the current function to block on.
+      Reference to the current block object (a command result with `IsFinished()` and `Result()`) to block on.
     * `break_block = false`  
-      Reference to the function to evaluate for premature block breaks.
+      Flag set by `BreakBlock()`; `BlockOnCommand(...)` returns early when it is `true`.
     * `YieldCount = 0`  
-      *[UNKNOWN]*: Presumably the amount of times the coroutine had to yield, but the purpose isn't clear.
+      Counter that `PumpEvents()` increments on every yield. The library only uses it in commented-out debug messages.
     * `AITarget = nil`  
-      The current AI target.
+      The current AI target. Set by the engine for AI plan scripts.
     * `Object = nil`  
-      Reference to the object the script is attached to.
+      Reference to the object the script is attached to. Set by the engine for unit scripts.
     * `Target = nil`  
-      Reference to the current target is usually stored here.
+      Reference to the current target is usually stored here. Set by the engine for AI plan and evaluator scripts.
     * `FreeStore = nil`  
-      Object free store. Generally used for AI.
+      Object free store. Generally used for AI. Set by the engine for free store scripts.
     * `PlayerObject = nil`  
-      Reference to the current player object is usually stored here.
+      Reference to the current player object is usually stored here. Set by the engine for AI plan, free store and evaluator scripts.
     * `LastService = nil`  
-      *[UNKNOWN]* Presumably the timestamp of the last service.
+      Game time of the script's last service, compared with `ServiceRate` by the engine ([service rule](../lua-script-lifecycle.md#31-unit-and-structure-scripts-lua_script-on-a-game-object-type)). By that rule, if a reused pooled state kept the previous owner's `LastService`, its next owner would not be serviced until the new game time passed that value.
     * `Budget = nil`  
-      *[UNKNOWN]* Presumably the reference to the current AI budget.
+      The AI budget of the plan. Set by the engine for AI plan scripts.
     * `enemy = nil`  
       Usually used to store the reference to the current enemy.
     * `taskforce = nil`  
       The current task force.
-    * `tfObj = nil`  
-      *[UNKNOWN]* Presumably the reference to the current taskforce object.
+    * `tfObj = nil`
+
+        !!! info "Unverified"
+            Reference to the current taskforce object.
+
     * `stage = nil`  
       *[UNKNOWN]*
     * `UnitType = nil`  
@@ -96,43 +99,46 @@ This function declares the variables that are commonly used throughout scripts a
     * `invade_status = nil`  
       *[UNKNOWN]*
     * `path = nil`  
-      *[UNKOWN]*
+      *[UNKNOWN]*
     * `InvasionActive = false`  
-      *[UNKOWN]*
+      *[UNKNOWN]*
     * `unit = nil`  
-      *[UNKOWN]*
+      *[UNKNOWN]*
     * `hide_target = nil`  
       Reference to a nearby Nebula/Ion Storm/Asteroid field.
     * `healer = nil`  
       Reference to an object that can heal the unit.
     * `xfire_pos = nil`  
-      *[UNKOWN]*
+      *[UNKNOWN]*
     * `kite_pos = nil`  
-      *[UNKOWN]*
+      *[UNKNOWN]*
     * `friendly = nil`  
       Reference to the friendly player.
     * `block_table = {}`  
-      The current block data is stored here.
-    * `lib_anti_idle_block = nil`  
-      *[UNKOWN]* Presumably anti-idle actions for the AI are stored here.
+      The pending reinforcement requests of `ReinforceList(...)` (PGSpawnUnits) are stored here.
+    * `lib_anti_idle_block = nil`
+
+        !!! info "Unverified"
+            Anti-idle actions for the AI are stored here.
 
 ---
 
 ### `function Base_Definitions()`
 
-The base constructor for every script object. It is called from `C++` and subsequently calls [`Common_Base_Definitions()`](#function-common_base_definitions "Common_Base_Definitions()") and [`Definitions()`]("Definitions") if present in the script object.
+The base constructor for every script. It is called from `C++` and subsequently calls [`Common_Base_Definitions()`](#function-common_base_definitions "Common_Base_Definitions()") and `Definitions()` if present in the script.
+The engine calls it when a script state is created and again, after `Flush_G()`, each time a pooled state is released, before the engine-set globals (`Object`, `PlayerObject`, `Target`, ...) are available, so `Definitions()` cannot use them; [Script setup](../lua-script-lifecycle.md#5-script-setup) gives the exact timing, including reuse and save games.
 
 ---
 
 ### `function Evaluator_Clean_Up()`
 
-Cleans out the `Target` and `PlayerObject` references. Subsequently calls [`Clean_Up()`]("Clean_Up()") if present in the script object.
+The engine calls this function by name for evaluator scripts. Cleans out the `Target` and `PlayerObject` references. Subsequently calls `Clean_Up()` if present in the script.
 
 ---
 
 ### `function UnitListIsObscured(unit_list)`
 
-Tests whether the the entire list of units is in a obscuring field, with obscuring fields being nebulae, asteroid fields and ion storms.
+Tests whether the entire list of units is in an obscuring field, with obscuring fields being nebulae, asteroid fields and ion storms.
 
 ???+ notes "Params"
 

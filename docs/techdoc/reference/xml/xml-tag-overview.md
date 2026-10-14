@@ -5,6 +5,19 @@ tags:
   - Xml
 ---
 
+The list below is the database map export that shipped with the game's map editor. Every tag in it is still parsed by the current release of Forces of Corruption, under the same element, and the export's type numbers agree with the current game except where noted here. Being parsed does not mean a tag has an effect: a small number of the listed tags are accepted and stored but never used by the game.
+
+Tags the current release parses that the export does not list:
+
+* Campaign: `Story_Name`
+* GameConstants: `Master_Decal_Slot_Count`, `Strategic_Command_Bar_Buildable_Row_Count`, `Tactical_Command_Bar_Buildable_Row_Count`
+* GameObjectType: `Apply_Special_Ability_To_Self_On_Creation`, `Disregard_Space_Layer_For_Guard_Attack_Move`, `Is_Sellable`, `MoveAttackWhileStopped`, `Space_Or_Garrison_Category`
+* SensorJammingAbility: `Show_Blob_To_Enemies`
+
+Tags whose value the current release parses with a different converter than the export's type number says: the unit category masks (`CategoryMask`, `Attack_Category_Restrictions`, `Garrison_Category`, `Planet_Restricted_Unit_Categories`, `Property_Flags`, `Special_Weapon_Valid_Targets`, the `Projectile_*_Category_Mask` tags, `Raid_Force_Free_Object_Category_Mask`, `Raid_Force_Limited_Object_Category_Mask`, `Infection_CategoryMask`, `Applicable_Unit_Categories`, `Excluded_Unit_Categories`, `Unit_Strength_Category`, and the TargetingPrioritySet `Category_Exclusions` and `Property_Exclusions`), `Required_Special_Structures`, `Tactical_Buildable_Objects_Campaign`, `Tactical_Buildable_Objects_Multiplayer`, `Targeting_Priority_Set`, the AIGoalProposalFunction `Function` and `Goal`, and the HeroClashType `Clash_Type`.
+
+Tag names in this list are matched case-insensitively. The story plot manifest tags `Active_Plot`, `Suspended_Plot` and `Lua_Script` are read by a separate reader and are not in the list: `Lua_Script` is matched case-insensitively, but `Active_Plot` must be written exactly so. Any other spelling of `Active_Plot` loads the plot as suspended, so the plot never starts, without an error.
+
 <DatabaseMapExport>
 
 	<KeyMapToClassDefinitions>
