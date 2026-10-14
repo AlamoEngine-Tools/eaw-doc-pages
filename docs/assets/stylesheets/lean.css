@@ -1,0 +1,27 @@
+/* Leaner Material: flatter chrome, wider measure, quieter sidebars, no code gutters.
+   Column layout is Material's default: site navigation left, content, page contents right. */
+
+/* Flat header and tab bar, no drop shadow. */
+.md-header, .md-tabs { box-shadow: none; }
+.md-header { border-bottom: 1px solid var(--md-default-fg-color--lightest); }
+
+/* A wider reading column; Material's default is 61rem. */
+.md-grid { max-width: 70rem; }
+
+/* Body text: slightly larger measure and looser leading than the default .8rem / 1.6. */
+.md-typeset { font-size: .82rem; line-height: 1.65; }
+.md-typeset h1 { font-weight: 600; margin-bottom: 1rem; }
+.md-typeset h2 { font-weight: 600; margin-top: 2.2em; }
+
+/* Code blocks: smaller type, no line-number gutter. */
+.md-typeset pre > code { font-size: .72rem; line-height: 1.5; }
+.md-typeset .highlight .linenos { display: none; }
+
+/* Sidebars: lighter text, less visual weight. */
+.md-nav__title, .md-nav__item .md-nav__link { font-weight: 400; }
+.md-nav--primary > .md-nav__title { font-weight: 600; }
+.md-sidebar--secondary .md-nav__link { color: var(--md-default-fg-color--light); }
+
+/* Tables: tighter cells. */
+.md-typeset table:not([class]) { font-size: .72rem; }
+.md-typeset table:not([class]) td, .md-typeset table:not([class]) th { padding: .5em .8em; }

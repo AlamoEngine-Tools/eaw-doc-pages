@@ -52,30 +52,38 @@ theme:
   name: material
   custom_dir: docs/overrides
   palette:
-    primary: indigo
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: white
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
   logo: assets/aet_icon.png
   favicon: assets/aet_icon.png
   font: false # [gruenwaldlk]: Disable google fonts for GDPR compliance. TODO: Add new (EaW specific) fonts.
   features:
     - navigation.tabs
     - navigation.tabs.sticky
-    - navigation.expand
-    - navigation.instant    
-    - navigation.tracking
+    - navigation.indexes
     - navigation.path
-    - navigation.sections
     - navigation.top
+    - navigation.tracking
     - toc.follow
-    - toc.integrate
+    - content.code.copy
     - search.suggest
     - search.highlight
-    - search.share
 markdown_extensions:
   - toc:
       permalink: true
-  - pymdownx.highlight:
-      linenums: true
-      anchor_linenums: true
+  - pymdownx.highlight
   - admonition
   - pymdownx.arithmatex
   - pymdownx.betterem:
@@ -109,6 +117,9 @@ plugins:
         timezone: Europe/Amsterdam
     - tags
 extra:
+  generator: false
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/AlamoEngine-Tools/eaw-doc-pages
+extra_css:
+  - assets/stylesheets/lean.css
