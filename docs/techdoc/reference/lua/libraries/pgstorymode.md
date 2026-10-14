@@ -33,7 +33,7 @@ ScriptPoolCount = 0
 
 ### `function PG_Story_Mode_Init()`
 
-Initialises the story mode. It is a wrapper around the [`Define_State(...)`](pgstatemachine#function-define_statestate-function_value "See PGStateMachine.Define_State(...)") function that ensures a valid setup for story scripts. It will use the `StoryModeEvents` table that has to be defined in every story script to initialise valid states.
+Initialises the story mode. It is a wrapper around the [`Define_State(...)`](pgstatemachine.md#function-define_statestate-function_value "See PGStateMachine.Define_State(...)") function that ensures a valid setup for story scripts. It will use the `StoryModeEvents` table that has to be defined in every story script to initialise valid states.
 
 ---
 

@@ -4,17 +4,18 @@
 # Required
 version: 2
 build:
-  os: "ubuntu-22.04"
+  os: "ubuntu-24.04"
   tools:
-    python: "3.11"
+    python: "3.12"
+  jobs:
+    post_checkout:
+      # git-revision-date-localized and git-authors need the full history, not a shallow clone.
+      - git fetch --unshallow || true
 
 mkdocs:
   configuration: mkdocs.yml
 
-# Optionally build your docs in additional formats such as PDF
-formats: all
-
-# Optionally set the version of Python and requirements required to build your docs
+# Pinned in depts/requirements.txt; bump the versions there, never here.
 python:
    install:
    - requirements: depts/requirements.txt

@@ -16,4 +16,4 @@ You can contribute to this documentation page by editing or adding pages and ope
 Pages can be tagged an therefore loosely grouped besides the rigid navigation.  
 This is a list of all tags and pages grouped by usage.
 
-[TAGS]
+<!-- material/tags -->

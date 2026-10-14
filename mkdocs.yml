@@ -23,6 +23,7 @@ nav:
     - References:
       - LUA:
         - techdoc/reference/lua/eaw-lua-tips.md
+        - techdoc/reference/lua/lua-script-lifecycle.md
         - techdoc/reference/lua/foc-lua-scripts.md
         - techdoc/reference/lua/luafunctions.md
         - Libraries:
@@ -72,8 +73,9 @@ theme:
 markdown_extensions:
   - toc:
       permalink: true
-  - codehilite:
+  - pymdownx.highlight:
       linenums: true
+      anchor_linenums: true
   - admonition
   - pymdownx.arithmatex
   - pymdownx.betterem:
@@ -82,12 +84,17 @@ markdown_extensions:
   - pymdownx.critic
   - pymdownx.details
   - pymdownx.emoji:
-      emoji_generator: !!python/name:pymdownx.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.inlinehilite
   - pymdownx.magiclink
   - pymdownx.mark
   - pymdownx.smartsymbols
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
@@ -100,9 +107,7 @@ plugins:
         fallback_to_build_date: true
         type: timeago
         timezone: Europe/Amsterdam
-    - tags:
-        tags_folder: /tmp/mysite/tgs
-        tags_file: index.md
+    - tags
 extra:
   social:
     - icon: fontawesome/brands/github
