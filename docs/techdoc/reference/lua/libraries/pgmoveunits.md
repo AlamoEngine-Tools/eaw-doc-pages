@@ -1,7 +1,7 @@
 ---
 title: PGMoveUnits.lua
 tags:
-  - LUA Library
+  - Lua Library
   - FoC
 ---
 

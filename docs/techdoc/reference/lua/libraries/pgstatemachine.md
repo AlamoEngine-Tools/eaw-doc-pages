@@ -1,7 +1,7 @@
 ---
 title: PGStateMachine.lua
 tags:
-  - LUA Library
+  - Lua Library
   - FoC
 ---
 

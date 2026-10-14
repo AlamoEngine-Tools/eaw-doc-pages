@@ -1,7 +1,7 @@
 ---
 title: PGStoryMode.lua
 tags:
-  - LUA Library
+  - Lua Library
   - FoC
 ---
 

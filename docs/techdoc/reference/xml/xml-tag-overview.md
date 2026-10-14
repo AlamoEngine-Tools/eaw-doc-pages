@@ -2,8 +2,10 @@
 title: FoC XML Tags
 summary: A list of most (all?) FoC Xml tags
 tags:
-  - Xml
+  - XML
 ---
+
+# FoC XML tags
 
 The list below is the database map export that shipped with the game's map editor. Every tag in it is still parsed by the current release of Forces of Corruption, under the same element, and the export's type numbers agree with the current game except where noted here. Being parsed does not mean a tag has an effect: a small number of the listed tags are accepted and stored but never used by the game.
 

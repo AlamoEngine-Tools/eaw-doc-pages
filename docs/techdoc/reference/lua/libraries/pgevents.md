@@ -1,7 +1,7 @@
 ---
 title: PGEvents.lua
 tags:
-  - LUA Library
+  - Lua Library
   - FoC
 ---
 

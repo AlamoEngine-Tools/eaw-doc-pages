@@ -1,7 +1,7 @@
 ---
 title: PGSpawnUnits.lua
 tags:
-  - LUA Library
+  - Lua Library
   - FoC
 ---
 

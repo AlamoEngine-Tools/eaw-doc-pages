@@ -2,7 +2,7 @@
 title: FoC XML events
 summary: A reference for XML Story events and rewards in FoC
 tags:
-  - Xml
+  - XML
   - Events
 ---
 # Events

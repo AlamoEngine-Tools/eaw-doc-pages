@@ -1,7 +1,7 @@
 ---
 title: PGCommands.lua
 tags:
-  - LUA Library
+  - Lua Library
   - FoC
 ---
 

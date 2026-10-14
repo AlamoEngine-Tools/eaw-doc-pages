@@ -1,7 +1,7 @@
 ---
 title: PGInterventions.lua
 tags:
-  - LUA Library
+  - Lua Library
   - FoC
 ---
 

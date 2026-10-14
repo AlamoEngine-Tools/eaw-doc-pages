@@ -4,7 +4,7 @@ summary: LUA - Issues and Quirks
 authors: Commander Cody
 comments: true
 tags:
-  - LUA
+  - Lua
   - Scripting
 ---
 

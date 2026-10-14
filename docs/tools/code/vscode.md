@@ -1,9 +1,9 @@
 ---
 title: VS Code
 tags:
- - Code Editor
- - EaW Compatible
- - FoC Compatible
+  - Code Editor
+  - EaW Compatible
+  - FoC Compatible
 ---
 
 # VS Code

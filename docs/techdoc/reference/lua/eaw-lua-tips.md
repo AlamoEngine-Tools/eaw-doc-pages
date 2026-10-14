@@ -6,8 +6,8 @@ tags:
   - Lua
   - Scripting
 ---
-# Engine issues and quirks
----
+# Lua tips
+
 
 The [known issues](../../issues/lua/issues.md) page is the reference for engine bugs; the entries below summarise them.
 

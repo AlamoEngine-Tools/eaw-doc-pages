@@ -1,7 +1,7 @@
 ---
 title: PGTaskForce.lua
 tags:
-  - LUA Library
+  - Lua Library
   - FoC
 ---
 

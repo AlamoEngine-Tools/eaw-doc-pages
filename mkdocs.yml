@@ -1,47 +1,45 @@
 nav:
   - Home: index.md
   - Modding Tools:
-    - Empire at War Tools:
+    - tools/index.md
+    - Empire at War tools:
+      - tools/eaw/index.md
       - tools/eaw/map_editor.md
       - tools/eaw/particle_editor.md
       - tools/eaw/alo_viewer.md
-    - Code Editors:
-      - tools/code/vscode.md
-    - Modelling Tools:
+    - Modelling and texturing:
+      - tools/modelling/index.md
       - tools/modelling/blender.md
       - tools/modelling/autodesk.md
-    - Texturing Tools:
       - tools/texturing/substance_suite.md
+    - tools/code/vscode.md
   - Technical Documentation:
-    #- Game Systems:
-    #  - Data:
-    #  - Story Scripting:
-    #  - AI:
-    - Known Issues and Quirks:
-      - LUA:
-        - techdoc/issues/lua/issues.md
-    - References:
-      - LUA:
-        - techdoc/reference/lua/eaw-lua-tips.md
-        - techdoc/reference/lua/lua-script-lifecycle.md
-        - techdoc/reference/lua/foc-lua-scripts.md
-        - techdoc/reference/lua/luafunctions.md
-        - Libraries:
-          - techdoc/reference/lua/libraries/pgdebug.md
-          - techdoc/reference/lua/libraries/pgbase.md
-          - techdoc/reference/lua/libraries/pgbasedefinitions.md
-          - techdoc/reference/lua/libraries/pgcommands.md
-          - techdoc/reference/lua/libraries/pgaicommands.md
-          - techdoc/reference/lua/libraries/pgstatemachine.md
-          - techdoc/reference/lua/libraries/pgmoveunits.md
-          - techdoc/reference/lua/libraries/pgspawnunits.md
-          - techdoc/reference/lua/libraries/pgstorymode.md
-          - techdoc/reference/lua/libraries/pgevents.md
-          - techdoc/reference/lua/libraries/pgtaskforce.md
-          - techdoc/reference/lua/libraries/pginterventions.md
-      - Xml:
-        - techdoc/reference/xml/xml-tag-overview.md
-        - techdoc/reference/xml/xml-events-rewards.md
+    - techdoc/index.md
+    - Lua:
+      - techdoc/reference/lua/index.md
+      - Script lifecycle: techdoc/reference/lua/lua-script-lifecycle.md
+      - Script categories: techdoc/reference/lua/foc-lua-scripts.md
+      - Engine functions: techdoc/reference/lua/luafunctions.md
+      - Libraries:
+        - techdoc/reference/lua/libraries/index.md
+        - techdoc/reference/lua/libraries/pgdebug.md
+        - techdoc/reference/lua/libraries/pgbase.md
+        - techdoc/reference/lua/libraries/pgbasedefinitions.md
+        - techdoc/reference/lua/libraries/pgcommands.md
+        - techdoc/reference/lua/libraries/pgaicommands.md
+        - techdoc/reference/lua/libraries/pgtaskforce.md
+        - techdoc/reference/lua/libraries/pgevents.md
+        - techdoc/reference/lua/libraries/pgstatemachine.md
+        - techdoc/reference/lua/libraries/pgstorymode.md
+        - techdoc/reference/lua/libraries/pgmoveunits.md
+        - techdoc/reference/lua/libraries/pgspawnunits.md
+        - techdoc/reference/lua/libraries/pginterventions.md
+      - Tips: techdoc/reference/lua/eaw-lua-tips.md
+      - Known issues and quirks: techdoc/issues/lua/issues.md
+    - XML:
+      - techdoc/reference/xml/index.md
+      - Tag overview: techdoc/reference/xml/xml-tag-overview.md
+      - Story events and rewards: techdoc/reference/xml/xml-events-rewards.md
 ######################### DO NOT EDIT BELOW THIS LINE #########################
 site_name: Star Wars - Empire at War - Unofficial Modding Documentation
 site_url: https://aet-sweaw-modding.readthedocs.io
@@ -76,6 +74,7 @@ theme:
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.indexes
+    - navigation.sections
     - navigation.path
     - navigation.top
     - navigation.tracking
