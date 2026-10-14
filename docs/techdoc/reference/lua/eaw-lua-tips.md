@@ -20,7 +20,7 @@ The [known issues](../../issues/lua/issues.md) page is the reference for engine 
 
 ---
 
-**Resume_Hyperspace_In problems:** Refers to a function that does not exist in the current game (`Cinematic_Hyperspace_In` exists); see [`Resume_Hyperspace_In` problems](../../issues/lua/issues.md#resume_hyperspace_in-problems).
+**Resume_Hyperspace_In:** The function exists. It releases an attacking fleet that `LINK_TACTICAL` reward parameter 9 set to `2` holds in hyperspace, and it only acts in space battles; see [`Resume_Hyperspace_In` problems](../../issues/lua/issues.md#resume_hyperspace_in-problems).
 
 ---
 
@@ -52,8 +52,7 @@ These four commands make nearly any camera shot possible. For all four the first
 - The next parameter takes 0 or a game object. If a game object is given the camera/target position is attached to it and follows its movements (e.g. for setting the camera to follow a moving ship). 
 - The second to last parameter takes 0 or 1. If set to 1, the function will evaluate the given coordinate offset in the attached object's coordinate system instead of the map's coordinate system (only works if the function is attached to a game object with the previous parameter). 
 
-!!! info "Unverified"
-    The last parameter plays the attached object's cinematic animation.
+The last parameter only matters together with an attached object: when set to 1 the key uses the centre of the object's world bounds instead of its position. It does not play an animation.
 
 ---
 
@@ -106,7 +105,6 @@ The `Teleport_And_Face` makes sure the unit faces the same direction as the mark
 
 **Delayed hyperspace exit for tactical missions:** In tactical missions it is sometimes desired to delay the arrival of the attacking fleet. Older documentation states that this can be done by setting `Reward_Param9` of the corresponding `LINK_TACTICAL` to `2`, which would prevent the attackers from arriving until the command `Resume_Hyperspace_In()` is called from lua.
 
-!!! info "Unverified"
-    `Resume_Hyperspace_In` refers to a function that does not exist in the current game, and the claim that `Reward_Param9` set to `2` delays the arrival is unconfirmed.
+This is how it works: with `Reward_Param9` set to `2` the attacking fleet's units stay hidden and the arrival cinematic does not start until `Resume_Hyperspace_In()` is called. The function only acts in space battles.
 
 ---

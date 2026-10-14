@@ -35,5 +35,5 @@ tags:
 
 ## `Resume_Hyperspace_In` problems
 
-!!! bug "Only usable during the intro cinematic"
-    `Resume_Hyperspace_In` refers to a function that does not exist in the current game; `Cinematic_Hyperspace_In` is the function that exists. Older documentation states that it can effectively only be used for the duration of the intro cinematic since fighter icons will appear on the map and the fleet will be spawned if the player uses cinematic mode.
+!!! bug "Only usable while the fleet is held in hyperspace"
+    `Resume_Hyperspace_In` exists: it releases an attacking fleet that `LINK_TACTICAL` reward parameter 9 set to `2` holds in hyperspace, and it only acts in space battles. Older documentation states (unverified) that it can effectively only be used for the duration of the intro cinematic since fighter icons will appear on the map and the fleet will be spawned if the player uses cinematic mode.

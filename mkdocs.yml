@@ -36,6 +36,9 @@ nav:
           - techdoc/reference/lua/libraries/pgmoveunits.md
           - techdoc/reference/lua/libraries/pgspawnunits.md
           - techdoc/reference/lua/libraries/pgstorymode.md
+          - techdoc/reference/lua/libraries/pgevents.md
+          - techdoc/reference/lua/libraries/pgtaskforce.md
+          - techdoc/reference/lua/libraries/pginterventions.md
       - Xml:
         - techdoc/reference/xml/xml-tag-overview.md
         - techdoc/reference/xml/xml-events-rewards.md

@@ -45,8 +45,7 @@ Triggers when the specified building is destroyed using the sabotage ability.
  
 Triggers once the given tech is bought.
 
-!!! info "Unverified"
-    Tech is the xml name of the tech type as defined in BlackMarketItems.
+Tech is the `Name` of an item in `BlackMarketItems.xml`. Several names can be listed and the comparison ignores case. The two vanilla `Cloaking_Tech` events of the underworld focus demo campaign match no item (the item is `Vehicle_Cloaking_Tech`), so they can never trigger.
 
 ---
 #### STORY_GARRISON_UNIT
@@ -133,14 +132,13 @@ Never used. Triggers when the game is played at the given difficulty level. An u
 
 ---
 #### STORY_UNIT_PROXIMITY
-* Parameter 1: Unit type (unverified)
-* Parameter 2: Unit type
+* Parameter 1: Unit type (optional, list)
+* Parameter 2: Unit type (list)
 * Parameter 3: Distance
 
 Used without parameter 1 in campaign.
 
-!!! info "Unverified"
-    Without parameter 1 it triggers for every player unit.
+Without parameter 1 it checks every unit of the local player; with parameter 1 only units of the listed types. It triggers once a unit of a parameter 2 type is closer than the distance to such a unit. Projectiles are ignored and other players' units never trigger it.
 
 ---
 #### STORY_GUARD_UNIT
@@ -171,8 +169,7 @@ Never used.
 * Parameter 2: Unit type (optional)
 * Parameter 3: Number (optional)
 
-!!! info "Unverified"
-    Parameter 3 is a distance.
+Parameter 3 is a distance and is only used together with parameter 2: the event then triggers when the commanded unit is of a parameter 1 type and a unit of a parameter 2 type is closer than the distance to the command's target position. Without parameter 2, or with a distance of 0, any command to a parameter 1 unit triggers it.
 
 ---
 #### STORY_SELECT_UNIT
@@ -185,8 +182,7 @@ Never used.
 
 Triggered by calling the `Story_Event` function from Lua with a trigger string as parameter. Planets go in parameter 1 and the trigger strings in parameter 2, as the vanilla files use it.
 
-!!! info "Unverified"
-    The planet list works if `Story_Event` takes a planet object as second parameter.
+The planet list requires that `Story_Event` is called with the planet (or any other object whose type name is listed) as its second parameter. With a planet list, a `Story_Event` call without an object does not trigger the event; without a planet list, a call with an object does not trigger it either. Names are compared ignoring case.
 
 ---
 #### STORY_TRIGGER
@@ -344,8 +340,7 @@ Never used, a left-over. The game has no implementation for this event type: an 
 
 Never used. Shares its implementation with `STORY_TECH_LEVEL`.
 
-!!! info "Unverified"
-    It is a left-over.
+It is not a left-over. The era is the highest tech level any player has reached and is checked every frame, whereas `STORY_TECH_LEVEL` triggers on a single player's tech level change. Parameter 1 set to `-1` triggers on the next era change after the event became active.
 
 ---
 #### STORY_TACTICAL_DESTROY
@@ -688,8 +683,7 @@ For the hint to be seen, a planet where the unit can be built as well as the rig
 
 No parameters.
 
-!!! info "Unverified"
-    This does not do anything anymore.
+It has no effect on play: the reward sets a flag that the game stores in save games but never reads. The same holds for the enable counterpart.
 
 ---
 #### ENABLE_DIRECT_INVASION
@@ -827,8 +821,7 @@ Enables or disables the automatic planet reveal in galactic mode.
 #### TRIGGER_EVENT
 * Parameter 1: Event name
 
-!!! info "Unverified"
-    Can trigger events across plots.
+It triggers the named event in every plot of the current game mode, including plots that are not active.
 
 ---
 #### SET_SPAWN
@@ -867,20 +860,15 @@ No parameters. Never used. There are game constants entries that look like confi
 * Parameter 7: Script name (optional)
 * Parameter 8: 1/0 (Use sandbox units; only for the player; optional, default 0)
 
-    !!! info "Unverified"
-        AI will never have their sandbox units.
+    Only a human player's units are carried into the battle; an AI side never gets its sandbox units.
 
-* Parameter 9: Whole number, default 1 (older documentation: use default intro camera sequence; its exact meaning in the battle setup is not documented here)
-
-    !!! info "Unverified"
-        The claim that `2` keeps the fleet in hyperspace until `Resume_Hyperspace_In` is called from lua is unconfirmed; that function does not exist in the current game.
+* Parameter 9: Pre-battle cinematic mode (0 = no pre-battle cinematic, 1 = default cinematic, 2 = the attacking fleet is held in hyperspace until `Resume_Hyperspace_In()` is called from Lua; default 1, any other value behaves as 1)
 
 * Parameter 10: 1/0 (Start faded out; default 0)
 * Parameter 11: 1/0 (Start letterboxed; default 0)
 * Parameter 12: [Battle result](#battle-result-types) (post-battle resolution name; an unknown name falls back to the default resolution and is logged)
 
-    !!! info "Unverified"
-        Only executed if the player wins.
+    The resolution is only applied when the local player wins the battle; after a defeat the default outcome applies.
 
 * Parameter 13: 1/0 (Show battle pending dialog; default 1)
 * Parameter 14: 1/0 (Allow pathfinder; default 1)
@@ -922,8 +910,7 @@ No parameters. Reveals all planets on the galactic map for the local player.
 * Parameter 2: 1/0
 * Parameter 3: Number (Radar ID)
 
-!!! info "Unverified"
-    Parameter 3 is the radar ID.
+Parameter 3 is the identifier of the radar blip; the same identifier removes the blip again when parameter 2 is `0`. `-1` or an empty parameter 3 adds no blip.
 
 Highlights first found object. If Parameter 3 is not `-1`, a radar blip is added at the object's position.
 
@@ -1068,8 +1055,7 @@ Parameter 2 does not filter anything: a transport whose unit type differs is onl
 * Parameter 2: 1/0 (disable)
 * Parameter 3: 1/0 (global)
 
-!!! info "Unverified"
-    Parameter 3 allows disabling either the given event in the same plot or all events with this name in any plot.
+Parameter 3 set to `1` disables every event with this name in all plots; otherwise only the event of the reward's own plot is affected. Parameters 1 and 2 are required.
 
 ---
 #### TRIGGER_AI
@@ -1189,11 +1175,10 @@ Remove a flash.
 * Parameter 2: [Flash type](#flash-types)
 * Parameter 3: Fleet number
 
-    !!! info "Unverified"
-        The fleet number is 0, 1 or 2.
+    The fleet number is 0, 1 or 2 and is only used for `FLASH_FLEET`.
 
 * Parameter 4: Identifier (see `HIDE_TUTORIAL_CURSOR`)
-* Parameter 5: True/False (unverified: whether the flash persists)
+* Parameter 5: Any non-empty value makes the tutorial cursor persistent; the text itself is not evaluated.
 
 ---
 #### FLASH_GUI
@@ -1218,8 +1203,7 @@ Never used.
 
 Never used.
 
-!!! info "Unverified"
-    The ground base changes do not work. The starbase change works but raises an assertion error.
+`MAX_GROUND_BASE_LEVEL` and `MAX_SPECIAL_STRUCTS` do nothing: the game has no working setter for them. `MAX_STARBASE_LEVEL` works; setting it below the planet's `Max_Starbase_Level` from the XML is reported to raise an assertion error.
 
 ---
 #### STORY_ELEMENT
@@ -1311,8 +1295,7 @@ Makes a locked unit buildable and optionally locks a unit to replace at the same
 * REGION_PRODUCTION
 * REGION_ORGANIZE
 
-    !!! info "Unverified"
-        Consists of fleet slots, land slots, special structure slots in that order.
+    Consists of fleet slots, land slots and special structure slots, searched in that order.
 
 * REGION_NONE
 
