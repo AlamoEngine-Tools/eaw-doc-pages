@@ -12,7 +12,8 @@ All scripts should define a function `Base_Definitions`, either directly or in o
 
 # AI
 Contains all galactic AI plans as well as subfolders "LandMode" and "SpaceMode" which contain the plans for the corresponding game modes.
-Note that scripts in this folder are only recognized by the game if they are in the main game directory (i.e. not in a mod folder) or if a script of the same name is contained in a loaded .meg file. In the latter case the script from this folder overrides the one in the .meg.
+At startup the game enumerates `*.lua` in its own `Data\Scripts\AI`, `AI\SpaceMode`, `AI\LandMode`, `AI\StoryArc` and `Data\Scripts\Interventions` directories relative to the game directory, and then in the registered MegaFiles. A mod folder is not searched by that enumeration, so loose plan files in a mod directory are not loaded at startup. Plan files packed into a MegaFile the mod registers are expected to be enumerated (from the archive search; not tested). Scripts referenced by name later still resolve through the normal mod-aware script path.
+Scripts in this folder are only recognized at startup if they are in the main game directory (i.e. not in a mod folder) or if a script of the same name is contained in a loaded .meg file. In the latter case the script from this folder overrides the one in the .meg.
 
 
 # Evaluators
@@ -27,7 +28,7 @@ The scripts in this folder handle the AI free store, i.e. they control those uni
 # GameObject
 Contains the unit scripts, which are attached to units with the `Lua_Script` tag. Each unit receives its own script state. States are pooled by default: when the unit dies, the game cleans the state with `Flush_G` and `Base_Definitions` and hands it to the next unit with the same script, so a number, string, boolean or function global that `Base_Definitions` does not reset carries over. [Lifecycle of one script state](lua-script-lifecycle.md#1-lifecycle-of-one-script-state) describes pooling, `ScriptPoolCount` and what `Flush_G` keeps.
 The `main` function is called when the unit is spawned. Unit scripts usually require PGStateMachine, which implements the `main` function and offers state machine functionality, instead of defining their own.
-Unit scripts must set the variable `ServiceRate` in the setup phase; otherwise the `main` function is not run.
+Unit and structure scripts must set the variable `ServiceRate` to a number in the setup phase. If it is nil or not a number the script is never serviced at all and its `main` never runs. The shipped PGStateMachine library sets it to 0.2 before `Definitions` runs.
 
 
 # Interventions

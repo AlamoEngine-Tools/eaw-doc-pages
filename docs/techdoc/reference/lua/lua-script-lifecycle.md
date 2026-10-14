@@ -157,7 +157,9 @@ restored state.
   `LastService`; not at all while the galactic game is paused or a battle runs under it. The
   game reads `LastService` and `ServiceRate` from the script and services it only when the
   current game time minus `LastService` exceeds `ServiceRate`; a `nil` `LastService` is
-  replaced by the game on the first service.
+  replaced by the game on the first service. A script whose `ServiceRate` is nil or not a number is never
+  serviced: its `main` never runs. The shipped state-machine library sets it to 0.2 before
+  `Definitions` runs.
 
 !!! warning
     `LastService` is a plain number and carries over; the library clears it in
@@ -263,8 +265,11 @@ skips the call silently.
   store plain values or small tables.
 - Verify behaviour in a second battle as well as the first, and after a save and load taken in
   the middle of a state.
-- Monitor the script log during tests: a thread that raises an error is removed, and the rest
-  of the script continues.
+- Monitor the script log during tests: a thread that raises a Lua error is removed, and the rest
+  of the script continues. An argument error in an engine function (wrong parameter count or
+  type, a function used in the wrong game mode, `Prevent_AI_Usage` on an owner whose AI is not
+  active) is logged and ends the whole script at the end of that service tick, like
+  `ScriptExit()`; a pooled script returns to the pool and the unit runs on without a script.
 
 ### 5.2 Practices to avoid
 
@@ -279,12 +284,13 @@ skips the call silently.
   and `GetEvent` resets) and the script's `Definitions()`. If it is unavoidable, call both.
 - Do not set `ScriptPoolCount = 0` on a common unit script as a workaround for reset problems;
   it costs a file parse per attach. Correct `Definitions()` instead.
-- Treat a change to a shipped script as save-breaking until tested. Modders have repeatedly
-  seen existing save games corrupted by script changes, with upvalues (locals captured by a
-  function) as one confirmed cause; the exact mechanism is still being investigated.
-  Independently of that, an edit to a script file does not reach an existing save, which
-  carries its own copy of the code, so a loaded game can run the saved version of a script next
-  to the new version in states created later.
+- Do not use upvalues in any script that can be in a save game. A function that captures a
+  local declared outside it is saved as its code plus the number of captured variables and is
+  restored with undefined bindings, so its next use of such a variable after a load crashes
+  the game or corrupts memory. Functions that use only globals, their parameters and their
+  own locals are safe. Independently of that, an edit to a script file does not reach an
+  existing save, which carries its own copy of the code, so a loaded game can run the saved
+  version of a script next to the new version in states created later.
 - Do not wait for a load event or restart `main` logic manually; no such event exists, and a
   restored script continues where it was.
 - Do not expect a galactic unit's script to run during a battle or a galactic pause, and do not

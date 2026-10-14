@@ -12,15 +12,15 @@ tags:
 The [known issues](../../issues/lua/issues.md) page is the reference for engine bugs; the entries below summarise them.
 
 !!! warning "Upvalues"
-    Upvalues, i.e. local variables defined outside of a function they are used in, crash the game when loading a save game. Treat a change to a shipped script as save-breaking until tested. See [Upvalues](../../issues/lua/issues.md#upvalues) for an example and [Practices to avoid](lua-script-lifecycle.md#52-practices-to-avoid) for what else a script change does to an existing save.
+    A function that uses a local variable declared outside it (an upvalue) loses that binding when a save game is loaded: the save stores the function's code and the number of upvalues, not their values, and the game restores the function with undefined upvalue slots. The next use of such a variable after a load reads or writes through an invalid pointer, which crashes the game or corrupts memory silently. Functions that use only globals, their parameters and their own locals are unaffected. Treat any upvalue in a script that can be saved as a defect.
 
 ---
 
-**Prevent_AI_Usage caveat:** Crashes the game on a unit whose faction has no AI assigned, which also rules out SpawnList in that situation; see [`Prevent_AI_Usage` caveat](../../issues/lua/issues.md#prevent_ai_usage-caveat).
+**Prevent_AI_Usage caveat:** Ends the whole script (the game does not crash) when the unit's owner has no active AI in the current mode, which also affects SpawnList in that situation; see [`Prevent_AI_Usage` caveat](../../issues/lua/issues.md#prevent_ai_usage-caveat).
 
 ---
 
-**Resume_Hyperspace_In problems:** Effectively usable only during the intro cinematic; see [`Resume_Hyperspace_In` problems](../../issues/lua/issues.md#resume_hyperspace_in-problems).
+**Resume_Hyperspace_In problems:** Refers to a function that does not exist in the current game (`Cinematic_Hyperspace_In` exists); see [`Resume_Hyperspace_In` problems](../../issues/lua/issues.md#resume_hyperspace_in-problems).
 
 ---
 
@@ -28,21 +28,19 @@ The [known issues](../../issues/lua/issues.md) page is the reference for engine 
 ---
 
 **AI activation in tactical battles:**
-In tactical battles the engine only activates the AI for players that have units on the map at the very start of the battle. To activate the AI for a faction that has no units at the beginning, use the Enable_As_Actor command.
+In tactical battles the engine only activates the AI for players that have units on the map at the very start of the battle. To activate the AI for a faction that has no units at the beginning, use the Enable_As_Actor command; this is the way to give a faction an AI presence in a battle.
 
 !!! info "Unverified"
-    The engine does this for performance reasons.
+    The claim that the AI activates only for factions with units at battle start is not confirmed, and neither is the reason (performance).
 
 ---
 
 **Error handling:**
-There are two fundamentally different types of errors: Lua errors and C++ exceptions. Lua errors are directly caused by Lua code (e.g. when trying to call a nil value or by using the `error` function) and will only crash the thread that they occurred in. The engine drops that thread, writes the error text and the call stack to the AI log, and keeps running the other threads of the same script. They can be caught using `pcall`. Exceptions can occur in C++ functions that the Lua code calls and crash the entire script.
+There are two kinds of script errors. A Lua runtime error (a thrown error inside a thread, e.g. calling a nil value or using the `error` function) removes only the thread it occurred in. The engine writes the error text and the call stack to the AI log and keeps running the other threads of the same script. Such errors can be caught using `pcall`.
 
-!!! info "Unverified"
-    There is no way to catch C++ exceptions from Lua.
+An argument error in an engine function (wrong parameter count or type, a function used in the wrong game mode, or `Prevent_AI_Usage` on an owner whose AI is not active in the current mode) is different. It is written to the AI log and then ends the whole script at the end of that service tick, the same as calling `ScriptExit()`. A pooled script goes back to the pool and the unit keeps running without a script. The game process does not crash.
 
-!!! info "Unverified"
-    The `error` and `pcall` functions work normally, except that when a string is passed to `error`, information on the line in which the error occurred is added to its beginning. Other data types are not modified.
+Engine functions never throw C++ exceptions into Lua; Lua errors are the only error mechanism. The `error` and `pcall` functions are standard Lua; the engine adds no line number to `error()` messages.
 
 ---
 
@@ -106,6 +104,9 @@ The `Teleport_And_Face` makes sure the unit faces the same direction as the mark
 
 ---
 
-**Delayed hyperspace exit for tactical missions:** In tactical missions it is sometimes desired to delay the arrival of the attacking fleet. This can be done by setting `Reward_Param9` of the corresponding `LINK_TACTICAL` to `2`. This will prevent the attackers from arriving until the command `Resume_Hyperspace_In()` is called from lua.
+**Delayed hyperspace exit for tactical missions:** In tactical missions it is sometimes desired to delay the arrival of the attacking fleet. Older documentation states that this can be done by setting `Reward_Param9` of the corresponding `LINK_TACTICAL` to `2`, which would prevent the attackers from arriving until the command `Resume_Hyperspace_In()` is called from lua.
+
+!!! info "Unverified"
+    `Resume_Hyperspace_In` refers to a function that does not exist in the current game, and the claim that `Reward_Param9` set to `2` delays the arrival is unconfirmed.
 
 ---

@@ -43,7 +43,7 @@ Defines the basic variables required for the state machine. It first calls `Comm
     * `CurrentStateIndex = 1`, `DefineStateIndex = 1`, `NextState = nil`, `CurrentState = nil`, `_curproc = nil`, `StoryModeEvents = nil`:  
       The state machine's bookkeeping.
     * `ServiceRate = 0.2`:  
-      The service rate: `1.0` services once a second, `0.2` services five times a second. The engine reads this global from the script ([service rule](../lua-script-lifecycle.md#31-unit-and-structure-scripts-lua_script-on-a-game-object-type)).
+      The service rate: `1.0` services once a second, `0.2` services five times a second. The engine reads this global from the script; a unit or structure script whose `ServiceRate` is nil or not a number is never serviced, so the library sets it to 0.2 before `Definitions` runs ([service rule](../lua-script-lifecycle.md#31-unit-and-structure-scripts-lua_script-on-a-game-object-type)).
 
 ---
 

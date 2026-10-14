@@ -18,7 +18,7 @@ The list is a reference only; comments are given only where useful information b
 |-----------------------------|----------------------------|--------------------------------------------------------------------------|
 | Script                      | All                        | The current script itself, set by the engine in every script. It is not a LuaScriptWrapper: its methods are those listed under `Script.` in the LuaScriptWrapper section below, and it survives `Flush_G`. |
 | LUA_PATH                    | All                        | The search path `require` uses, set by the engine: `./?.lua;./?.lc;` followed by `<dir>?.lua;<dir>?.lc;` for each script directory (Library, GameObject, FreeStore, Miscellaneous, Story, AI, AI/LandMode, AI/SpaceMode, AI/StoryArc, Interventions, Evaluators, in this order). All directories share one module namespace, so a file name must be unique across them. |
-| ServiceRate                 | All(?)                     | The amount of time (in seconds) the script is suspended after a coroutine yield (i.e. call to PumpEvents). This is adjusted to an integer number of frames and is always at least 1 frame or 0.033 seconds. Can be adjusted at any point in the script(?).     |
+| ServiceRate                 | All(?)                     | The amount of time (in seconds) the script is suspended after a coroutine yield (i.e. call to PumpEvents). This is adjusted to an integer number of frames and is always at least 1 frame or 0.033 seconds. Can be adjusted at any point in the script(?). For unit and structure scripts it must be a number: if `ServiceRate` is nil or not a number the script is never serviced and its `main` never runs.     |
 | UnitServiceRate             | Free-store scripts         | The amount of time in seconds between consecutive calls to `On_Unit_Service`(for same unit?) |
 | LuaThreadTable              | All?                       | Table whose keys are objects of type thread and whose entries are booleans. The first entry contains the main thread.  |
 | LuaWrapperMetaTable         | All(?)                     | The meta table for all GameObjectWrappers and PlayerWrappers and maybe all other objects. Has entries for __call, __gc, __eq, __tostring and __index.     |
@@ -52,12 +52,12 @@ The list is a reference only; comments are given only where useful information b
 | StringCompare(X,Y)                 | X = string, Y = string          | -                                                                        |
 | BlockForever(?)                    | -                               | -                                                                        |
 | Is_Multiplayer_Mode()              | -                               | -                                                                        |
-| Get_Game_Mode()                    | -                               | Returns "Land", "Space" or "Galactic"                                    |
+| Get_Game_Mode()                    | -                               | Returns exactly "Galactic", "Land" or "Space" ("Unknown" for anything else) |
 | Is_Campaign_Game()                 | -                               | True for galactic campaign games                                         |
 | Lock_Controls(X)                   | X = 0,1                         | (Un)Lock all player controls                                             |
 | Suspend_AI(X)                      | X = 0,1                         | -                                                                        |
 | Cancel_Fast_Forward()              | -                               | Stops fast forward                                                       |
-| Resume_Hyperspace_In()             | -                               | In tactical missions when reward parameter 9 of LINK_TACTICAL is set to 2, this will trigger the arrival of the attacking fleet. Fighter icons will appear on the map anyway and the fleet will be spawned if the player uses cinematic mode.  |
+| Resume_Hyperspace_In()             | -                               | Refers to a function that does not exist in the current game; `Cinematic_Hyperspace_In` is the function that exists. Older documentation claims that in tactical missions when reward parameter 9 of LINK_TACTICAL is set to 2, this will trigger the arrival of the attacking fleet. Fighter icons will appear on the map anyway and the fleet will be spawned if the player uses cinematic mode.  |
 | Game_Message(X)                    | X = text string from dat file   | Displays the text entry as a droid advisor hint                          |
 | Add_Objective(X,Y)                 | X = text string, Y = bool       | For Y = true the objective is added under the heading "Battle Information", for Y = false it is added under the heading "Mission Objectives"      |
 | Remove_Planet_Highlight(X)         | X = string                      | -                                                                        |
@@ -115,9 +115,9 @@ The list is a reference only; comments are given only where useful information b
 | Find_Nearest_Space_Field(X,Y)      | X = game object or taskforce, Y = "Asteroid"/"Nebula"/"Ion_Storm"? | -                                     |
 | Find_Best_Local_Threat_Center(X,Y) | X = unit list, Y = number(distance) | Returns position and combined threat of units (from the unit list) in range of the position.    |
 | Get_Most_Defended_Position(X,Y)    | X = ai target location, Y = player | Tactical only. Returns a position.                                     |
-| Project_By_Unit_Range(X,Y)         | X = game object, Y = game object or taskforce | Tactical only. Returns a position outside the range of X   |
+| Project_By_Unit_Range(X,Y)         | X = game object, Y = game object or taskforce | Tactical only (an error in galactic mode, which ends the script; see the [`Prevent_AI_Usage` caveat](../../issues/lua/issues.md#prevent_ai_usage-caveat)). A dead target is an error. Identical positions give a warning and return nil. Returns a position outside the range of X   |
 | Find_Path(X,Y,Z)                   | X = player, Y = planet object, Z = planet object | Galactic only. Only for AI players. Returns a list of planet objects.   |
-| FindPlanet(X)                      | X = string(planet name)         | Galactic only                                                            |
+| FindPlanet(X)                      | X = string(planet name)         | No game mode restriction. Returns nil when the name is unknown.          |
 | FindPlanet.Get_All_Planets()       | -                               | Galactic only                                                            |
 
 ## Spawning objects
@@ -149,7 +149,7 @@ The list is a reference only; comments are given only where useful information b
 | Start_Cinematic_Mode()             | -                               | -                                                                        |
 | Set_Cinematic_Environment(X)       | X = bool                        | Used for the opening cinematic of the campaigns |
 | Promote_To_Space_Cinematic_Layer(X) | X = game object                | Used for the opening cinematic of the campaigns   |
-| Create_Cinematic_Transport(X,Y,Z,U,V,W,R,S,T) | X = string(object type), Y = number(playerID), Z = position, U = number(angle), V = number(phase), W = number, R = number, S = number, T = hint(?) | -                             |
+| Create_Cinematic_Transport(X,Y,Z,U,V,W,R,S,T) | X = string(object type), Y = number(playerID), Z = position, U = number(angle), V = number(phase), W = number, R = number, S = number, T = string (optional 9th argument) | Land tactical only. Takes 8 arguments plus the optional 9th string. |
 | Cinematic_Zoom(X,Y)                | X = transition time(number), Y = zoom factor(number) | Zoom in for Y < 1, out for Y > 1. X sets the time for the transition to the zoomed state. Crashes the script if used when cinematic camera is off.  |
 | Transition_To_Tactical_Camera(X)   | X = number(time)                | -                                                                        |
 | Transition_Cinematic_Camera_Key(X,Y,Z,U,V,W,R,S,T) | X = position, Y = time, Z = x coord, U = y coord, V = z coord, W = 0,1, R = game object or 0, S = 0,1, T = 0,1(?) | Transition the camera position to a new position. Setting W to 1 switches Y,Z,U from cartesian coordinates to spherical coordinates (Y being the radius and U being the angle in the x-y-plane).   |
@@ -202,7 +202,7 @@ The list is a reference only; comments are given only where useful information b
 ## Randomization
 | Function                           | Parameters                      | Usage                                                                    |
 |------------------------------------|---------------------------------|--------------------------------------------------------------------------|
-| GameRandom(X, Y)                   | X = integer, Y = integer        | Returns random integer between X and Y (uses game time as seed)          |
+| GameRandom(X, Y)                   | X, Y = integer (both optional)  | Without arguments returns a whole number in 0..65535; `GameRandom(n)` returns 0..n; `GameRandom(a, b)` returns a..b. A non-number argument is logged and ignored. All draws come from the game's synchronised random generator, so it is safe in multiplayer. |
 | GameRandom.Get_Float()             | -                               | Returns random float between 0 and 1                                     |
 | GameRandom.Get_Float(X, Y)         | X = number, Y = number          | Returns random float between X and Y                                     |
 | GameRandom.Free_Random(X, Y)       | X = integer, Y = integer        | Returns random integer between X and Y (unverified: uses real time as seed)  |
@@ -281,7 +281,7 @@ The list is a reference only; comments are given only where useful information b
 |------------------------------------|---------------------------------|--------------------------------------------------------------------------|
 | Story_Event(X,Y)                   | X = string, Y = game object?(optional)    | Trigger a STORY_AI_NOTIFICATION event                          |
 | Check_Story_Flag(X,Y,Z,U)          | X = player, Y = string, Z = game object, U = bool |Checks if corresponding reward type TRIGGER_AI has fired.    |
-| Get_Story_Plot(X)                  | X = string (story_file_name.xml)     | Returns the story file as StoryPlotWrapper object. The parameter is case sensitive.   |
+| Get_Story_Plot(X)                  | X = string (story_file_name.xml)     | Returns the story file as StoryPlotWrapper object. The parameter is case insensitive. A missing plot gives a warning and returns nil.   |
 
 ## StoryPlotWrapper functions
 | Function                           | Parameters                      | Usage                                                                    |
@@ -342,9 +342,9 @@ The list is a reference only; comments are given only where useful information b
 | .Are_Engines_Online()              | -                               | Returns true or false                                                    |
 | .Override_Max_Speed(X)             | X = number                      | -                                                                        |
 | .Cinematic_Hyperspace_In(X)        | X = integer (number of frames)  | Makes unit hyperspace into battle with delay by X frames (unverified: spawning many units with different delays at the same time spawns all units with the same delay anyway)  |
-| .Hyperspace_Away(X)                | X = true/false (default is true)| Makes unit leave into hyperspace. If X is true, the unit gets deleted from the galactic campaign    |
+| .Hyperspace_Away(X)                | X = true/false (default is true)| Makes unit leave into hyperspace. Space mode only. Takes zero or one boolean; X defaults to true when absent. If X is true, the unit gets deleted from the galactic campaign. An immobile object is an error, which ends the script (see [Script errors](../../issues/lua/issues.md#prevent_ai_usage-caveat))    |
 | .Cancel_Hyperspace()               | -                               | -                                                                        |
-| .Prevent_AI_Usage(X)               | X = true / false                | Allow or prevent AI usage. In tactical battles this crashes the game if the unit has no active AI. When the factions AI changes, the unit is AI usable again.   |
+| .Prevent_AI_Usage(X)               | X = true / false                | Allow or prevent AI usage. If the owner's AI is not active in the current game mode this is an argument error: it is logged and ends the whole script at the end of the service tick (see the [`Prevent_AI_Usage` caveat](../../issues/lua/issues.md#prevent_ai_usage-caveat)); the game does not crash. If the owner has no AI player at all, the call only writes a warning and returns nil. When the factions AI changes, the unit is AI usable again.   |
 | .Hide(X)                           | X = true / false                | (Un)Hides the object                                                     |
 | .Play_Animation(X, Y, Z)           | X = Animation name (string)     | -                                                                        |
 | -                                  | Y = bool                        | -                                                                        |
@@ -413,7 +413,7 @@ The list is a reference only; comments are given only where useful information b
 | .Contains_Object_Type(X)           | X = game object type            | Only use on fleets                                                      |
 | .Get_Contained_Object_Count()      | -                               | Only use on fleets                                                       |
 | .Has_Active_Orders()               | -                               | -                                                                        |
-| .Get_AI_Power_Vs_Unit(X)           | X = game object                 | (tactical only)                                                                        |
+| .Get_AI_Power_Vs_Unit(X)           | X = game object                 | Works in any game mode. Returns own power minus the target's power.                    |
 | .Divert(X,Y)                       | X = object or position, Y = number(optional)  | -                                                                        |
 | .Get_Next_Starbase_Type()          | -                               | Use on planets                                                            |
 | .Mark_Parent_Mode_Object_For_Death() | -                             | Use in tactical. This kills the corresponding galactic object       |
@@ -515,7 +515,7 @@ The list is a reference only; comments are given only where useful information b
 | Evaluate_In_Galactic_Context(X,Y)  | X = string(perception), Y = player | For tactical battle (tactical only). Evaluates the perception at galactic level and returns a number. |
 | Apply_Markup(X,Y,Z)                | X = player, Y = game object, ai target or list, Z = number | The engine checks for exactly three arguments.                |
 | Purge_Goals(X)                     | X = player                      | -                                                                        |
-| GiveDesireBonus(X,Y,Z,U,V)         | X = player, Y = string(goal(set?)), Z = ai target, U = number, V = number | -                              |
+| GiveDesireBonus(X,Y,Z,U,V)         | X = player, Y = string(goal type name), Z = ai target location or game object, U = number, V = number | Takes exactly five arguments (its own error message says four, which is wrong). |
 | EvaluatePerception(X,Y,Z)          | X = string(perception), Y = player, Z = game object/ai target | Evaluates a perception and returns the result. Y and Z are needed if and only if the perception uses Variable_Self and Variable_Target, respectively.  |
 | _FindStageArea(X,Y,Z)              | X = player, Y = game object/ai target, Z = taskforce | Deprecated but may still work as intended           |
 | _ProduceObject(X,Y,Z)              | X = player, Y = game object type (name?), Z = planet/ ai target | Deprecated but may still work as intended   |
@@ -535,9 +535,9 @@ The list is a reference only; comments are given only where useful information b
 |------------------------------------|---------------------------------|--------------------------------------------------------------------------|
 | FreeStore.Is_Object_On_Free_Store(X) | X = game object               | -                                                                        |
 | FreeStore.Get_Object_Count(X)      | X = bool(optional)              | Returns a number                                                         |
-| FreeStore.Is_Unit_Safe(X)          | X = game object                 | Galactic only(?)                                                            |
-| FreeStore.Is_Unit_In_Transit(X)    | X = game object                 | Galactic only(?)                                                                 |
-| FreeStore.Move_Object(X,Y)         | X = game object, Y = planet     | Galactic only(?)                                                                 |
+| FreeStore.Is_Unit_Safe(X)          | X = game object                 | Galactic mode only; the base free store does not have this method.          |
+| FreeStore.Is_Unit_In_Transit(X)    | X = game object                 | Galactic mode only; the base free store does not have this method.          |
+| FreeStore.Move_Object(X,Y)         | X = game object, Y = planet     | Galactic mode only; the base free store does not have this method.          |
 
 
 ## Task force functions
@@ -634,21 +634,31 @@ The list is a reference only; comments are given only where useful information b
 
 # Task force events
 
-Shown in the table are the default event handlers. Taskforce specific handlers can be defined by replacing the "Default" in the name with the taskforce name. These event handlers are not C functions provided for Lua but functions that can be defined in Lua (AI scripts) and are called by the engine under the respective circumstances.
+Shown in the table are the default event handlers. A plan script receives exactly these 24 events, each through a handler named `<TaskForceName>_<Event>` or, failing that, `Default_<Event>`. Taskforce specific handlers are defined by replacing the "Default" in the name with the taskforce name. These event handlers are not C functions provided for Lua but functions that can be defined in Lua (AI scripts) and are called by the engine under the respective circumstances.
 
 | Function                                | Parameters                      | Usage                                                                    |
 |-----------------------------------------|---------------------------------|---------------------------------------|
-| Default_Production_Failed(X, Y)         | X = taskforce, Y = object type  | -                                     |
+| Default_Production_Failed(X, Y)        | X = taskforce, Y = object type  | -                                     |
 | Default_Unit_Destroyed()                | -                               | -                                     |
 | Default_No_Units_Remaining()            | -                               | -                                     |
 | Default_Original_Target_Owner_Changed(X, Y, Z) | X = taskforce, Y = old player, Z = new player | -                |
-| Default_Current_Target_Owner_Changed(?) | ?                               | Unverified                            |
+| Default_Current_Target_Owner_Changed(?) | not documented                  | -                                     |
 | Default_Special_Weapon_Online(X, Y)     | X = taskforce, Y = special weapon | -                                   |
 | Default_Hardpoint_Target_In_Range(X, Y, Z) | X = taskforce, Y = unit, Z = target | -                              |
-| Default_Hardpoint_Opportunity_Target_Acquired(?) | ?                      | Unverified                            |
+| Default_Hardpoint_Opportunity_Target_Acquired(?) | not documented         | -                                     |
 | Default_Unit_Move_Finished(X, Y)        | X = taskforce, Y = unit         | -                                     |
 | Default_Unit_Ability_Finished(X, Y)     | X = taskforce, Y = unit         | -                                     |
 | Default_Unit_Diversion_Finished(X, Y)   | X = taskforce, Y = unit         | -                                     |
 | Default_Unit_Ability_Cancelled(X, Y, Z) | X = taskforce, Y = unit, Z = ability name | -                           |
 | Default_Unit_Ability_Ready(X, Y, Z)     | X = taskforce, Y = unit, Z = ability name | -                           |
-| Default_Unit_No_Threat(?)               | ?                               | Unverified                            |
+| Default_Unit_No_Threat(?)               | not documented                  | -                                     |
+| Default_Current_Target_Destroyed(?)     | not documented                  | -                                     |
+| Default_Fleet_Destoyed(?)              | not documented; the game spells the event name without the r, so the handler must too | -                                     |
+| Default_Ground_Conflict_Begin(?)        | not documented                  | -                                     |
+| Default_Ground_Conflict_End(?)          | not documented                  | -                                     |
+| Default_Original_Target_Destroyed(?)    | not documented                  | -                                     |
+| Default_Reached_System_On_Path(?)       | not documented                  | -                                     |
+| Default_Space_Conflict_Begin(?)         | not documented                  | -                                     |
+| Default_Space_Conflict_End(?)           | not documented                  | -                                     |
+| Default_Target_In_Range(?)              | not documented                  | -                                     |
+| Default_Unit_Damaged(?)                 | not documented                  | -                                     |

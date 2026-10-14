@@ -106,6 +106,7 @@ Triggers when the specified faction wins.
 #### STORY_CHECK_DESTROYED
 * Parameter 1: Faction
 * Parameter 2: [Destruction type](#destruction-types)
+* Parameter 3: Object type
 
 ---
 #### STORY_LOAD_TACTICAL_MAP
@@ -179,9 +180,10 @@ Never used.
 
 ---
 #### STORY_AI_NOTIFICATION
-* Parameter 2: String identifier
+* Parameter 1: Planets (list, optional)
+* Parameter 2: Trigger strings (list)
 
-Triggered by calling the `Story_Event` function from Lua with the identifier as parameter. According to the story scripting tutorial that came with the map editor it also takes a comma separated list of planets.
+Triggered by calling the `Story_Event` function from Lua with a trigger string as parameter. Planets go in parameter 1 and the trigger strings in parameter 2, as the vanilla files use it.
 
 !!! info "Unverified"
     The planet list works if `Story_Event` takes a planet object as second parameter.
@@ -856,28 +858,34 @@ No parameters. Never used. There are game constants entries that look like confi
 
 ---
 #### LINK_TACTICAL
-* Parameter 1: Planet
-* Parameter 2: GROUND/SPACE
-* Parameter 3: Faction (Attacker)
-* Parameter 4: Map file name
-* Parameter 5: Faction (Defender)
-* Parameter 6: Unit type (pathfinder)
-* Parameter 7: Plot file name
-* Parameter 8: 1/0 (Use sandbox units; only for the player)
+* Parameter 1: Planet (required)
+* Parameter 2: SPACE/LAND (required)
+* Parameter 3: Faction (Attacker; required)
+* Parameter 4: Map file name (required)
+* Parameter 5: Faction (Defender; required)
+* Parameter 6: Hero unit type (optional)
+* Parameter 7: Script name (optional)
+* Parameter 8: 1/0 (Use sandbox units; only for the player; optional, default 0)
 
     !!! info "Unverified"
         AI will never have their sandbox units.
 
-* Parameter 9: 1/0/2 (Use default intro camera sequence. `2` will keep the fleet in hyperspace until `Resume_Hyperspace_In` is called from lua; note that certain player actions will also cause the fleet to jump in so controls must be locked while the fleet is suspended in hyperspace)
-* Parameter 10: 1/0 (Start faded out)
-* Parameter 11: 1/0 (Start letterboxed)
-* Parameter 12: [Battle result](#battle-result-types)
+* Parameter 9: Whole number, default 1 (older documentation: use default intro camera sequence; its exact meaning in the battle setup is not documented here)
+
+    !!! info "Unverified"
+        The claim that `2` keeps the fleet in hyperspace until `Resume_Hyperspace_In` is called from lua is unconfirmed; that function does not exist in the current game.
+
+* Parameter 10: 1/0 (Start faded out; default 0)
+* Parameter 11: 1/0 (Start letterboxed; default 0)
+* Parameter 12: [Battle result](#battle-result-types) (post-battle resolution name; an unknown name falls back to the default resolution and is logged)
 
     !!! info "Unverified"
         Only executed if the player wins.
 
-* Parameter 13: 1/0 (Show battle pending dialog)
-* Parameter 14: 1/0 (Allow pathfinder)
+* Parameter 13: 1/0 (Show battle pending dialog; default 1)
+* Parameter 14: 1/0 (Allow pathfinder; default 1)
+
+If the game is currently in galactic mode the battle starts immediately, otherwise it is queued.
 
 ---
 #### RESET_EVENT
@@ -1161,11 +1169,11 @@ Never used. This takes a [filter](#filter-types) and an identifier. The event wi
 #### SCREEN_TEXT
 * Parameter 1: Text file identifier
 * Parameter 2: Number (seconds), defaults to 5
-* Parameter 3: Unit type (variable that is inserted into the text; use `%s` as placeholder in the text)
-* Parameter 4: `remove`
-* Parameter 5: 1/0 (unverified: use teletyping)
+* Parameter 3: Object type (optional; variable that is inserted into the text; use `%s` as placeholder in the text)
+* Parameter 4: Any non-empty value removes the text of parameter 1 instead of showing it (the vanilla `remove` value is that form)
+* Parameter 5: 1/0 (default 1; unverified: use teletyping)
 * Parameter 6: Text color (three space-separated numbers: r g b)
-* Parameter 7: Text color scheme (`Task`, `Hint`, `System`, `Speech`, `Alien_Speech`)
+* Parameter 7: Text style (`HINT`, `SYSTEM`, `TASK`, `ALIEN_SPEECH`, `SPEECH`)
 
 Shows a text in the upper left corner for the given number of seconds. Use `-1` to keep the text on-screen indefinitely. The text can be removed again by using the event again with the same text file identifier and non-empty parameter 4.
 
@@ -1228,6 +1236,8 @@ Does nothing.
 #### SPAWN_HERO
 * Parameter 1: Hero team
 * Parameter 2: Planet
+
+Behaves exactly like `UNIQUE_UNIT` (same handler).
 
 ---
 #### CREDITS
